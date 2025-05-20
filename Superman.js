@@ -298,6 +298,7 @@ function startGame() {
     isCountdownActive = true;
     countdown = 3;
     animateCountdown();
+    pauseOverlay.style.display = 'none';
 }
 
 function animateCountdown() {
@@ -779,6 +780,7 @@ function showHomepage() {
     score = 0;
     Superman.y = SupermanY;
     pauseOverlay.style.display = "none";
+    document.getElementById('rotate-warning').style.display = 'none';
 
 }  
 
