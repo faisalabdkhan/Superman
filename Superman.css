@@ -7,6 +7,39 @@ body, html {
     background-color: #000;
 }
 
+body {
+    background-image: url("images/background-desktop.jpg"); /* Default for desktop */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+/* For phones (portrait, up to 480px wide) */
+@media (max-width: 480px) {
+    body {
+        background-image: url("images/background-mobile.jpg");
+        background-position: center top;
+    }
+}
+
+/* For tablets (portrait and landscape, 481px to 1024px) */
+@media (min-width: 481px) and (max-width: 1024px) {
+    body {
+        background-image: url("images/background-tablet.jpg");
+        background-position: center center;
+    }
+}
+
+/* For large desktops (wider than 1025px) */
+@media (min-width: 1025px) {
+    body {
+        background-image: url("images/background-desktop.jpg");
+        background-position: center center;
+    }
+}
+
+
 .game-container {
     position: relative;
     width: 100%;
