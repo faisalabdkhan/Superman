@@ -109,8 +109,23 @@
         
         /* Pause overlay fixes */
         .pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: none;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .pause-overlay img {
+            margin: 15px 0;
+            width: 30%;
+            max-width: 80px;
         }
         
         #sound-btn-pause, #mute-btn-pause {
