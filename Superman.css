@@ -98,36 +98,3 @@ canvas {
     pointer-events: none;
 }
 
-.game-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 360px;  /* Default size for mobile */
-    height: 640px; /* 9:16 aspect ratio */
-    background-color: #000;
-    overflow: hidden;
-}
-
-/* Responsive Scaling */
-@media (min-aspect-ratio: 9/16) {
-    .game-container {
-        width: calc(100vh * (9/16));
-        height: 100vh;
-    }
-}
-
-@media (max-aspect-ratio: 9/16) {
-    .game-container {
-        width: 100vw;
-        height: calc(100vw * (16/9));
-    }
-}
-
-/* For landscape orientation on mobile */
-@media screen and (orientation: landscape) {
-    .game-container {
-        width: calc(100vh * (9/16));
-        height: 100vh;
-    }
-}
