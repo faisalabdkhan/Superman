@@ -175,47 +175,6 @@ window.onload = function () {
 
 
     showHomepage();
-
-    // Add to window.onload function
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    
-    function handleResize() {
-        const gameContainer = document.querySelector('.game-container');
-        const aspectRatio = 9/16;
-        
-        if (window.matchMedia("(orientation: portrait)").matches) {
-            gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-            gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-        } else {
-            gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-            gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-        }
-    
-        // Update canvas scale
-        const scale = Math.min(
-            gameContainer.offsetWidth / 360,
-            gameContainer.offsetHeight / 640
-        );
-        
-        board.style.transform = `scale(${scale})`;
-        ui.style.transform = `scale(${scale})`;
-        board.style.transformOrigin = 'top left';
-        ui.style.transformOrigin = 'top left';
-    }
-
-        // Add to window.onload
-    window.addEventListener('resize', checkOrientation);
-    checkOrientation();
-    
-    function checkOrientation() {
-        const warning = document.getElementById('rotate-warning');
-        if (window.matchMedia("(orientation: landscape)").matches && window.innerWidth < 1000) {
-            warning.style.display = 'block';
-        } else {
-            warning.style.display = 'none';
-        }
-    }
 };
 
 function toggleSound() {
@@ -298,7 +257,6 @@ function startGame() {
     isCountdownActive = true;
     countdown = 3;
     animateCountdown();
-    pauseOverlay.style.display = 'none';
 }
 
 function animateCountdown() {
@@ -564,43 +522,59 @@ function setDynamicPipeInterval() {
     return setInterval(placePipes, interval);
 }
 
-// Modify the handleTouch function
-function handleTouch(e) {
-    e.preventDefault();
+function handleKeyPress(e) {
     
+    if (e.code === "KeyM") toggleSound();
+    if (isCountdownActive) return;
+    if (e.code === "KeyP" && !gameOver) {
+        if (isPaused) resumeGame();
+        else pauseGame();
+    }
+    if (!gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
+        startGame();
+        return;
+    }
+
+    if (gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
+        velocityY = -6;
+        if (soundEnabled) {
+            flySound.currentTime = 0;
+            flySound.play();
+        }
+    }
+
+    if (gameOver && e.code === "Enter") restartGame();
+}
+
+function handleTouch(e) {
+    e.preventDefault(); // prevent scrolling on mobile
+
     if (isCountdownActive) return;
 
-    // Get touch coordinates
-    const rect = board.getBoundingClientRect();
-    const x = e.touches[0].clientX - rect.left;
-    const y = e.touches[0].clientY - rect.top;
+    // Start game if not started yet
+    if (!gameStarted && !gameOver) {
+        startGame();
+        return;
+    }
 
+    // If game is over, restart
     if (gameOver) {
-        // Check if touch is within restart button area
-        const restartBtn = document.getElementById('restart-btn');
-        const btnRect = restartBtn.getBoundingClientRect();
-        if (x >= btnRect.left && x <= btnRect.right && 
-            y >= btnRect.top && y <= btnRect.bottom) {
-            restartGame();
-        }
+        restartGame();
         return;
     }
 
-    if (!gameStarted) {
-        // Check if touch is within start button area
-        const startBtn = document.getElementById('start-btn');
-        const btnRect = startBtn.getBoundingClientRect();
-        if (x >= btnRect.left && x <= btnRect.right && 
-            y >= btnRect.top && y <= btnRect.bottom) {
-            startGame();
-        }
-        return;
-    }
-
-    // Existing fly logic
+    // Fly action
     if (gameStarted && !gameOver && !isPaused) {
         velocityY = -6;
-        if (soundEnabled) flySound.play();
+        if (soundEnabled) {
+            flySound.currentTime = 0;
+            flySound.play();
+        }
+    }
+
+    // If game is paused, resume
+    if (isPaused) {
+        resumeGame();
     }
 }
 
@@ -780,7 +754,5 @@ function showHomepage() {
     score = 0;
     Superman.y = SupermanY;
     pauseOverlay.style.display = "none";
-    document.getElementById('rotate-warning').style.display = 'none';
 
 }  
-
