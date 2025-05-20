@@ -98,20 +98,5 @@ canvas {
     pointer-events: none;
 }
 
-/* Add to your CSS */
-img.game-control {
-    pointer-events: auto;
-    touch-action: manipulation;
-}
 
-canvas {
-    touch-action: none;
-    -webkit-touch-callout: none;
-}
-
-#rotate-warning {
-    font-size: 1.5rem;
-    padding: 20% 10% 0;
-    box-sizing: border-box;
-}
 
