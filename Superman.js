@@ -203,6 +203,19 @@ window.onload = function () {
         board.style.transformOrigin = 'top left';
         ui.style.transformOrigin = 'top left';
     }
+
+        // Add to window.onload
+    window.addEventListener('resize', checkOrientation);
+    checkOrientation();
+    
+    function checkOrientation() {
+        const warning = document.getElementById('rotate-warning');
+        if (window.matchMedia("(orientation: landscape)").matches && window.innerWidth < 1000) {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
+    }
 };
 
 function toggleSound() {
