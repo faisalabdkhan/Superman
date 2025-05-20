@@ -65,56 +65,66 @@
         #ui { z-index: 3; }
 
         /* Button Positioning */
+        /* Update all button positions to use percentages */
+        .game-control {
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+        
         #start-btn {
-            left: 25%;
-            top: 32%;
+            left: 50%;
+            top: 35%;
             width: 50%;
-            height: auto;
+            max-width: 180px;
         }
         
         #restart-btn {
-            left: 35%;
-            top: 62%;
-            width: 30%;
-            height: auto;
+            left: 50%;
+            top: 65%;
+            width: 22%;
+            max-width: 80px;
         }
         
         #sound-btn-home, #mute-btn-home {
-            left: 1.4%;
-            top: 0.8%;
+            left: 5%;
+            top: 5%;
             width: 11%;
-            height: auto;
+            max-width: 40px;
         }
         
         #pause-btn, #play-btn {
-            right: 1.4%;
-            top: 0.8%;
+            right: 5%;
+            top: 5%;
             width: 11%;
-            height: auto;
+            max-width: 40px;
+            left: auto;
         }
         
         #sound-btn-gameover, #mute-btn-gameover {
-            left: 51%;
-            top: 62%;
+            left: 75%;
+            top: 65%;
             width: 22%;
-            height: auto;
+            max-width: 80px;
         }
         
-        #pause-overlay img {
-            width: 22%;
-            height: auto;
-            margin: 0 4%;
+        /* Pause overlay fixes */
+        .pause-overlay {
+            background: rgba(0, 0, 0, 0.85);
+            flex-direction: column;
         }
-
-        .game-control {
-            position: absolute;
-            cursor: pointer;
-            z-index: 1000;
-            border: none;
-            background: transparent;
-            padding: 0;
-            display: none;
+        
+        #sound-btn-pause, #mute-btn-pause {
+            position: static;
+            margin: 10px 0;
+            width: 30%;
+            max-width: 80px;
         }
+        
+        #resume-btn {
+            width: 30%;
+            max-width: 80px;
+            margin-bottom: 20px;
+}
 
         #board, #ui { display: none; }
         #homepage { display: block; }
