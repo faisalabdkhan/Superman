@@ -1,6 +1,12 @@
-// Game constants
-let boardWidth = 360;
-let boardHeight = 640;
+const REFERENCE_WIDTH = 360;
+const REFERENCE_HEIGHT = 640;
+
+// Dynamic variables for scaling
+let scaleFactor = 1;
+
+// Game constants (keep as before)
+let boardWidth = REFERENCE_WIDTH;
+let boardHeight = REFERENCE_HEIGHT;
 let context;
 let uiContext;
 let homepage = document.getElementById("homepage");
@@ -22,20 +28,18 @@ let lastPowerUpSpawn = 0;
 let powerUpSpawnInterval = 10000; // 10 seconds
 let enemyArray = [];
 let enemySpawnInterval = 4000; // 4 seconds
-let lastEnemySpawn = 0; // Enemy parameters
+let lastEnemySpawn = 0;
 let baseEnemySpeed = -4;
-let enemySpeedIncrease = -0.5; // Speed increase per level
-let maxEnemySpeed = -8;        // Maximum enemy speed
-// Difficulty caps
+let enemySpeedIncrease = -0.5;
+let maxEnemySpeed = -8;
 const MAX_DIFFICULTY_LEVEL = 5;
-const PIPE_INTERVAL_REDUCTION_PER_LEVEL = 200; // How much faster pipes spawn per level
-
+const PIPE_INTERVAL_REDUCTION_PER_LEVEL = 200;
 
 // Superman
 let SupermanWidth = 74.8;
 let SupermanHeight = 32.4;
-let SupermanX = boardWidth / 8;
-let SupermanY = boardHeight / 2;
+let SupermanX = REFERENCE_WIDTH / 8;
+let SupermanY = REFERENCE_HEIGHT / 2;
 let SupermanImg;
 
 let Superman = {
@@ -49,14 +53,14 @@ let Superman = {
 let pipeArray = [];
 let pipeWidth = 64;
 let pipeHeight = 512;
-let pipeX = boardWidth;
+let pipeX = REFERENCE_WIDTH;
 let pipeY = 0;
 
 // Difficulty parameters
 let basePipeInterval = 1700;
 let minPipeInterval = 900;
 let maxPipeInterval = 1720;
-let basePipeGap = boardHeight / 3.2;
+let basePipeGap = REFERENCE_HEIGHT / 3.2;
 let minPipeGap = 90;
 let baseVelocityX = -2;
 let maxVelocityX = -6;
@@ -88,8 +92,7 @@ let currentLevel = 0;
 let lastLevelCheckpoint = 0;
 let countdown = 3;
 let isCountdownActive = false;
-let lastPipeGap = { top: 0, bottom: 0 }; // Stores the Y-range of the pipe gap
-
+let lastPipeGap = { top: 0, bottom: 0 };
 
 // Level animation
 let isLevelAnimating = false;
@@ -111,54 +114,109 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
+// Responsive resize logic
+function resizeGame() {
+    const container = document.querySelector('.game-container');
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const aspect = REFERENCE_HEIGHT / REFERENCE_WIDTH;
 
+    let newWidth, newHeight;
+    if (windowHeight / windowWidth > aspect) {
+        // Window is taller than game aspect
+        newWidth = windowWidth;
+        newHeight = windowWidth * aspect;
+    } else {
+        // Window is wider than game aspect
+        newHeight = windowHeight;
+        newWidth = windowHeight / aspect;
+    }
+    scaleFactor = newWidth / REFERENCE_WIDTH;
+
+    // Set canvas CSS size
+    board.style.width = `${newWidth}px`;
+    board.style.height = `${newHeight}px`;
+    ui.style.width = `${newWidth}px`;
+    ui.style.height = `${newHeight}px`;
+    homepage.style.width = `${newWidth}px`;
+    homepage.style.height = `${newHeight}px`;
+
+    // Set canvas pixel size for sharpness
+    const dpr = window.devicePixelRatio || 1;
+    board.width = newWidth * dpr;
+    board.height = newHeight * dpr;
+    ui.width = newWidth * dpr;
+    ui.height = newHeight * dpr;
+
+    // Set context transforms
+    context.setTransform(dpr * scaleFactor, 0, 0, dpr * scaleFactor, 0, 0);
+    uiContext.setTransform(dpr * scaleFactor, 0, 0, dpr * scaleFactor, 0, 0);
+
+    repositionUIElements();
+}
+
+// Reposition and scale UI elements responsively
+function repositionUIElements() {
+    function scalePos(val) { return `${val * scaleFactor}px`; }
+    [
+        { id: "start-btn", left: 90, top: 210, width: 140, height: 60 },
+        { id: "restart-btn", left: 95, top: 400, width: 80, height: 80 },
+        { id: "pause-btn", right: 5, top: 5, width: 40, height: 40 },
+        { id: "play-btn", right: 5, top: 5, width: 40, height: 40 },
+        { id: "sound-btn-home", left: 5, top: 5, width: 40, height: 40 },
+        { id: "mute-btn-home", left: 5, top: 5, width: 40, height: 40 },
+        { id: "sound-btn-gameover", left: 185, top: 400, width: 80, height: 80 },
+        { id: "mute-btn-gameover", left: 185, top: 400, width: 80, height: 80 },
+        { id: "sound-btn-pause", left: 120, top: 300, width: 80, height: 80 },
+        { id: "mute-btn-pause", left: 220, top: 300, width: 80, height: 80 },
+        { id: "resume-btn", left: 170, top: 200, width: 80, height: 80 }
+    ].forEach(({ id, left, right, top, width, height }) => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (typeof left !== "undefined") el.style.left = scalePos(left);
+            if (typeof right !== "undefined") el.style.right = scalePos(right);
+            if (typeof top !== "undefined") el.style.top = scalePos(top);
+            if (typeof width !== "undefined") el.style.width = scalePos(width);
+            if (typeof height !== "undefined") el.style.height = scalePos(height);
+        }
+    });
+}
+
+// Responsive event listeners
+window.addEventListener('resize', resizeGame);
+window.addEventListener('orientationchange', () => setTimeout(resizeGame, 200));
+
+// --- ORIGINAL GAME LOGIC BELOW (unchanged except for using REFERENCE_WIDTH/HEIGHT) ---
 
 window.onload = function () {
     board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth;
     context = board.getContext("2d");
-
-    let uiCanvas = document.getElementById("ui");
-    uiCanvas.height = boardHeight;
-    uiCanvas.width = boardWidth;
-    uiContext = uiCanvas.getContext("2d");
+    ui = document.getElementById("ui");
+    uiContext = ui.getContext("2d");
 
     // Load images
-
-
     powerUpImg.src = "./images/powerups.png";
     enemyImg.src = "./images/enemy.png";
-
     SupermanImg = new Image();
     SupermanImg.src = "./images/superman1.png";
-
     topPipeImg = new Image();
     topPipeImg.src = "./images/toppipe.png";
-
     bottomPipeImg = new Image();
     bottomPipeImg.src = "./images/bottompipe.png";
-
     newTopPipeImg = new Image();
     newTopPipeImg.src = "./images/pipe11.png";
-
     newBottomPipeImg = new Image();
     newBottomPipeImg.src = "./images/pipe1.png";
-
     gameOverImg = new Image();
     gameOverImg.src = "./images/gameover.png";
-
     highScoreImg = new Image();
     highScoreImg.src = "./images/highscore.png";
-
     collisionImg = new Image();
     collisionImg.src = "./images/collision.png";
 
-    // Initialize sound
     bgMusic.loop = true;
     updateSoundDisplay();
 
-    // Event listeners
     startBtn.addEventListener("click", startGame);
     restartBtn.addEventListener("click", restartGame);
     document.addEventListener("keydown", handleKeyPress);
@@ -173,9 +231,11 @@ window.onload = function () {
     muteBtnPause.addEventListener("click", toggleSound);
     document.addEventListener("touchstart", handleTouch);
 
-
+    resizeGame();
     showHomepage();
 };
+
+
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
