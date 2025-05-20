@@ -175,6 +175,34 @@ window.onload = function () {
 
 
     showHomepage();
+
+    // Add to window.onload function
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    function handleResize() {
+        const gameContainer = document.querySelector('.game-container');
+        const aspectRatio = 9/16;
+        
+        if (window.matchMedia("(orientation: portrait)").matches) {
+            gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
+            gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
+        } else {
+            gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
+            gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
+        }
+    
+        // Update canvas scale
+        const scale = Math.min(
+            gameContainer.offsetWidth / 360,
+            gameContainer.offsetHeight / 640
+        );
+        
+        board.style.transform = `scale(${scale})`;
+        ui.style.transform = `scale(${scale})`;
+        board.style.transformOrigin = 'top left';
+        ui.style.transformOrigin = 'top left';
+    }
 };
 
 function toggleSound() {
