@@ -563,59 +563,43 @@ function setDynamicPipeInterval() {
     return setInterval(placePipes, interval);
 }
 
-function handleKeyPress(e) {
-    
-    if (e.code === "KeyM") toggleSound();
-    if (isCountdownActive) return;
-    if (e.code === "KeyP" && !gameOver) {
-        if (isPaused) resumeGame();
-        else pauseGame();
-    }
-    if (!gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
-        startGame();
-        return;
-    }
-
-    if (gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
-        velocityY = -6;
-        if (soundEnabled) {
-            flySound.currentTime = 0;
-            flySound.play();
-        }
-    }
-
-    if (gameOver && e.code === "Enter") restartGame();
-}
-
+// Modify the handleTouch function
 function handleTouch(e) {
-    e.preventDefault(); // prevent scrolling on mobile
-
+    e.preventDefault();
+    
     if (isCountdownActive) return;
 
-    // Start game if not started yet
-    if (!gameStarted && !gameOver) {
-        startGame();
-        return;
-    }
+    // Get touch coordinates
+    const rect = board.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
 
-    // If game is over, restart
     if (gameOver) {
-        restartGame();
+        // Check if touch is within restart button area
+        const restartBtn = document.getElementById('restart-btn');
+        const btnRect = restartBtn.getBoundingClientRect();
+        if (x >= btnRect.left && x <= btnRect.right && 
+            y >= btnRect.top && y <= btnRect.bottom) {
+            restartGame();
+        }
         return;
     }
 
-    // Fly action
+    if (!gameStarted) {
+        // Check if touch is within start button area
+        const startBtn = document.getElementById('start-btn');
+        const btnRect = startBtn.getBoundingClientRect();
+        if (x >= btnRect.left && x <= btnRect.right && 
+            y >= btnRect.top && y <= btnRect.bottom) {
+            startGame();
+        }
+        return;
+    }
+
+    // Existing fly logic
     if (gameStarted && !gameOver && !isPaused) {
         velocityY = -6;
-        if (soundEnabled) {
-            flySound.currentTime = 0;
-            flySound.play();
-        }
-    }
-
-    // If game is paused, resume
-    if (isPaused) {
-        resumeGame();
+        if (soundEnabled) flySound.play();
     }
 }
 
