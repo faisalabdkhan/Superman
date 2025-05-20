@@ -127,6 +127,23 @@
             width: 30%;
             max-width: 80px;
         }
+
+                /* Add to your CSS */
+        img.game-control {
+            pointer-events: auto;
+            touch-action: manipulation;
+        }
+        
+        canvas {
+            touch-action: none;
+            -webkit-touch-callout: none;
+        }
+        
+        #rotate-warning {
+            font-size: 1.5rem;
+            padding: 20% 10% 0;
+            box-sizing: border-box;
+        }
         
         #sound-btn-pause, #mute-btn-pause {
             position: static;
