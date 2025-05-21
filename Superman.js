@@ -113,8 +113,24 @@ const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
 
+function handleResize() {
+    const container = document.querySelector('.game-container');
+    const aspectRatio = window.innerWidth / window.innerHeight;
+    
+    if (aspectRatio < 9/16) { // Portrait
+        const scale = window.innerWidth / 360;
+        container.style.transform = `scale(${scale})`;
+    } else { // Landscape
+        const scale = window.innerHeight / 640;
+        container.style.transform = `scale(${scale})`;
+    }
+}
+
+window.addEventListener('resize', handleResize);
+
 
 window.onload = function () {
+    handleResize();
     const container = document.querySelector('.game-container');
     const actualWidth = container.clientWidth;
     const actualHeight = container.clientHeight;
@@ -126,7 +142,7 @@ window.onload = function () {
     
     // Set up canvases
     board = document.getElementById("board");
-    board.height = boardHeight * devicePixelRatio;
+    board.height = boardHeight;
     board.width = boardWidth * devicePixelRatio;
     board.style.width = boardWidth + 'px';
     board.style.height = boardHeight + 'px';
@@ -176,6 +192,8 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
+
+
     // Event listeners
     startBtn.addEventListener("click", startGame);
     restartBtn.addEventListener("click", restartGame);
@@ -192,17 +210,11 @@ window.onload = function () {
     document.addEventListener("touchstart", handleTouch);
 
 
+
     showHomepage();
 };
 
-window.addEventListener('resize', () => {
-    scaleFactor = Math.min(
-        window.innerWidth / 360,
-        window.innerHeight / 640
-    );
-    
-    document.querySelector('.game-container').style.transform = `scale(${scaleFactor})`;
-});
+
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
