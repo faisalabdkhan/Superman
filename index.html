@@ -16,6 +16,21 @@
             margin: 0 auto;
             background-color: #000;
         }
+    
+        /* Responsive Scaling */
+        @media (orientation: portrait) and (max-width: 360px) {
+            .game-container {
+                transform: scale(calc(100vw / 360));
+                transform-origin: top left;
+            }
+        }
+    
+        @media (orientation: landscape) and (max-height: 640px) {
+            .game-container {
+                transform: scale(calc(100vh / 640));
+                transform-origin: top left;
+            }
+        }
         
         #homepage, #board, #ui {
             position: absolute;
