@@ -112,21 +112,33 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
+// Add to window.onload function
+window.addEventListener('resize', handleResize);
+handleResize();
 
 function handleResize() {
-    const container = document.querySelector('.game-container');
-    const aspectRatio = window.innerWidth / window.innerHeight;
+    const gameContainer = document.querySelector('.game-container');
+    const aspectRatio = 9/16;
     
-    if (aspectRatio < 9/16) { // Portrait
-        const scale = window.innerWidth / 360;
-        container.style.transform = `scale(${scale})`;
-    } else { // Landscape
-        const scale = window.innerHeight / 640;
-        container.style.transform = `scale(${scale})`;
+    if (window.matchMedia("(orientation: portrait)").matches) {
+        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
+        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
+    } else {
+        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
+        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
     }
-}
 
-window.addEventListener('resize', handleResize);
+    // Update canvas scale
+    const scale = Math.min(
+        gameContainer.offsetWidth / 360,
+        gameContainer.offsetHeight / 640
+    );
+    
+    board.style.transform = `scale(${scale})`;
+    ui.style.transform = `scale(${scale})`;
+    board.style.transformOrigin = 'top left';
+    ui.style.transformOrigin = 'top left';
+}
 
 
 window.onload = function () {
