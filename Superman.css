@@ -46,10 +46,18 @@ body {
 }
 
 /* Game Over Screen Elements */
+
 .game-over-elements {
-    display: none;
+    display: none; /* Keep this to hide initially */
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 20;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
 }
 
 /* Button Visibility Control */
