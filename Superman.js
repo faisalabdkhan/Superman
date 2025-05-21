@@ -158,44 +158,6 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
-    // Add to window.onload
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    
-    function handleResize() {
-        const gameContainer = document.querySelector('.game-container');
-        const aspectRatio = 9/16;
-        
-        // Calculate scale based on window dimensions
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        const scale = Math.min(windowWidth / 360, windowHeight / 640);
-        
-        // Apply scaling to the container
-        gameContainer.style.setProperty('--game-scale', scale);
-        
-        // Update internal dimensions
-        boardWidth = 360;
-        boardHeight = 640;
-        board.width = boardWidth;
-        board.height = boardHeight;
-        ui.width = boardWidth;
-        ui.height = boardHeight;
-    }
-    
-    // Orientation Check
-    function checkOrientation() {
-        const warning = document.getElementById('rotate-warning');
-        const gameContainer = document.querySelector('.game-container');
-        
-        if (window.matchMedia("(orientation: landscape)").matches && window.innerWidth < 1000) {
-            warning.style.display = 'block';
-            gameContainer.style.display = 'none';
-        } else {
-            warning.style.display = 'none';
-            gameContainer.style.display = 'block';
-        }
-    }
     // Event listeners
     startBtn.addEventListener("click", startGame);
     restartBtn.addEventListener("click", restartGame);
@@ -298,8 +260,6 @@ function startGame() {
 }
 
 function animateCountdown() {
-    context.fillStyle = "rgba(0, 0, 0, 0.5)";
-    context.fillRect(0, 0, boardWidth, boardHeight);
     if (!isCountdownActive) return;
 
     // Clear canvases
@@ -334,8 +294,6 @@ function animateCountdown() {
 }
 
 function update() {
-    uiContext.fillStyle = "rgba(0, 0, 0, 0.7)";
-    uiContext.fillRect(0, 0, boardWidth, 50);
     if (!gameStarted || gameOver || isPaused || isCountdownActive) return;
     animationFrameId = requestAnimationFrame(update);
     
@@ -351,13 +309,14 @@ function update() {
     }
 
     // UI elements
-
+    uiContext.fillStyle = "rgba(0, 0, 0, 0.5)";
+    uiContext.fillRect(0, 0, boardWidth, 50);
     uiContext.fillStyle = "#FFD700";
-    uiContext.font = "bold 20px Arial";
-    uiContext.textAlign = "left";
-    uiContext.fillText(`SCORE: ${Math.floor(score)}`, 10, 35);
-    uiContext.textAlign = "right";
-    uiContext.fillText(`HIGH: ${highScore}`, boardWidth - 10, 35);
+    uiContext.font = "16px Arial";
+    uiContext.textAlign = "center";
+    uiContext.fillText(`HIGH: ${highScore}`, boardWidth / 2 - 140, 30);
+    uiContext.textAlign = "center";
+    uiContext.fillText(`LEVEL ${currentLevel}`, boardWidth / 2 , 30);
 
     // Superman physics
     velocityY += gravity;
@@ -588,13 +547,6 @@ function handleKeyPress(e) {
 }
 
 function handleTouch(e) {
-    const rect = board.getBoundingClientRect();
-    const scaleX = board.width / rect.width;
-    const scaleY = board.height / rect.height;
-    
-    // Convert touch coordinates to game coordinates
-    const x = (e.touches[0].clientX - rect.left) * scaleX;
-    const y = (e.touches[0].clientY - rect.top) * scaleY;
     e.preventDefault(); // prevent scrolling on mobile
 
     if (isCountdownActive) return;
@@ -668,22 +620,6 @@ function endGame() {
         localStorage.setItem("supermanHighScore", highScore);
     }
 
-        // Show game over elements
-    uiContext.drawImage(gameOverImg, 
-        boardWidth/2 - 150,  // X position
-        boardHeight/2 - 100, // Y position
-        300,                 // Width
-        200                  // Height
-    );
-
-        // Show high score
-    uiContext.font = "bold 30px Arial";
-    uiContext.fillText(`HIGH SCORE: ${highScore}`, boardWidth/2, boardHeight/2 + 50);
-    
-    // Position restart button properly
-    restartBtn.style.left = "50%";
-    restartBtn.style.transform = "translateX(-50%)";
-    restartBtn.style.top = "60%";
 
     // Hide the pause button after the game ends
     pauseBtn.style.display = "none";  // Hide the pause button
