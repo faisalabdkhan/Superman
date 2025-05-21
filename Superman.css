@@ -95,14 +95,13 @@ canvas {
     position: absolute;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Changed from 'contain' to 'cover' */
-    top: 0;
-    left: 0;
+    object-fit: contain;
+    transform-origin: center;
 }
 
 #homepage { 
-    z-index: 10;
-    display: block;
+    z-index: 1;
+    display: none;
 }
 
 #board { 
