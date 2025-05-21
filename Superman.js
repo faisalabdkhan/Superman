@@ -1,6 +1,5 @@
 // Game constants
-let boardWidth = 360;
-let boardHeight = 640;
+let boardWidth, boardHeight;
 let context;
 let uiContext;
 let homepage = document.getElementById("homepage");
@@ -23,7 +22,7 @@ let powerUpSpawnInterval = 10000; // 10 seconds
 let enemyArray = [];
 let enemySpawnInterval = 4000; // 4 seconds
 let lastEnemySpawn = 0; // Enemy parameters
-let baseEnemySpeed = -4;
+let baseEnemySpeed = -boardWidth * 0.011; 
 let enemySpeedIncrease = -0.5; // Speed increase per level
 let maxEnemySpeed = -8;        // Maximum enemy speed
 // Difficulty caps
@@ -77,7 +76,7 @@ let collisionImg;
 // Game variables
 let velocityX = baseVelocityX;
 let velocityY = 0;
-let gravity = 0.4;
+let gravity = boardHeight * 0.000625;
 let gameOver = false;
 let score = 0;
 let highScore = parseInt(localStorage.getItem("supermanHighScore")) || 0;
@@ -113,7 +112,31 @@ const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
 
 
+// Add this function right after variable declarations
+function updateGameSize() {
+    const container = document.querySelector('.game-container');
+    boardWidth = container.offsetWidth;
+    boardHeight = container.offsetHeight;
+    
+    board.width = boardWidth;
+    board.height = boardHeight;
+    ui.width = boardWidth;
+    ui.height = boardHeight;
+    
+    // Update superman size proportionally
+    SupermanWidth = boardWidth * 0.208;
+    SupermanHeight = boardHeight * 0.051;
+    Superman.width = SupermanWidth;
+    Superman.height = SupermanHeight;
+    
+    // Update pipe dimensions
+    pipeWidth = boardWidth * 0.178;
+    pipeHeight = boardHeight * 0.8;
+    basePipeGap = boardHeight / 3.2;
+}
+
 window.onload = function () {
+    window.addEventListener('resize', updateGameSize);
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth;
@@ -153,6 +176,9 @@ window.onload = function () {
 
     collisionImg = new Image();
     collisionImg.src = "./images/collision.png";
+
+    updateGameSize();
+    board = document.getElementById("board");
 
     // Initialize sound
     bgMusic.loop = true;
@@ -471,7 +497,7 @@ function updateDifficulty() {
 function placePipes() {
     if (gameOver || !gameStarted) return;
     const currentGap = basePipeGap;
-    let minPipeY = -pipeHeight + 50; // Original minimum Y position
+    let minPipeY = -pipeHeight + boardHeight * 0.078;
     let maxPipeY = 0 - currentGap - 150; // Original maximum Y position
     let randomPipeY = Math.random() * (maxPipeY - minPipeY) + minPipeY;
 
