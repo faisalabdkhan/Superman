@@ -4,35 +4,47 @@
 <head>
     <meta charset="UTF-8">
 <!-- Replace existing viewport meta tag with -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Superman Game</title>
     <link rel="icon" type="image/png" href="images/fav6.png">
     <link rel="stylesheet" href="Superman.css">
     <style>
-        .game-container {
-            position: relative;
-            width: 360px;
-            height: 640px;
-            margin: 0 auto;
+        body {
+            margin: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
             background-color: #000;
         }
+        .game-container {
+            position: absolute;
+            width: 360px;
+            height: 640px;
+            background-color: #000;
+            transform-origin: top left;
+        }
     
-        /* Responsive Scaling */
-        @media (orientation: portrait) and (max-width: 360px) {
+        /* Mobile Portrait (default) */
+        @media (max-aspect-ratio: 9/16) {
             .game-container {
                 transform: scale(calc(100vw / 360));
-                transform-origin: top left;
             }
         }
     
-        @media (orientation: landscape) and (max-height: 640px) {
+        /* Mobile Landscape & Desktop */
+        @media (min-aspect-ratio: 9/16) {
             .game-container {
                 transform: scale(calc(100vh / 640));
-                transform-origin: top left;
             }
         }
-        
+    
+        /* Prevent scaling artifacts */
+        canvas {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: pixelated;
+        }
+
         #homepage, #board, #ui {
             position: absolute;
             top: 0;
