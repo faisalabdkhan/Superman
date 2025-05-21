@@ -27,26 +27,21 @@ body {
     height: 640px;
     background-color: #000;
     overflow: hidden;
-    /* Add these for perfect image alignment */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    transform-origin: center;
 }
 
 /* Responsive Scaling */
-@media (max-aspect-ratio: 9/16) {
+@media (min-aspect-ratio: 9/16) {
     .game-container {
-        transform: 
-            translate(-50%, -50%)
-            scale(calc(100vh / 640));
+        width: calc(100vh * (9/16));
+        height: 100vh;
     }
 }
 
-@media (min-aspect-ratio: 9/16) {
+@media (max-aspect-ratio: 9/16) {
     .game-container {
-        transform: 
-            translate(-50%, -50%)
-            scale(calc(100vw / 360));
+        width: 100vw;
+        height: calc(100vw * (16/9));
     }
 }
 
@@ -92,23 +87,10 @@ canvas {
     position: absolute;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Changed from 'contain' to 'cover' */
+    object-fit: contain;
     transform-origin: center;
-    pointer-events: none; 
 }
-#homepage {
-    /* Prevent browsers from resizing image */
-    max-width: none !important;
-    max-height: none !important;
-    /* Ensure pixel-perfect alignment */
-    top: 0;
-    left: 0;
-    transform: none;
-    image-rendering: crisp-edges;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-optimize-contrast;
-    
-}
+
 #homepage { 
     z-index: 10;
     display: block;
