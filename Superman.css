@@ -83,12 +83,21 @@ canvas {
 }
 
 /* Layer Positioning */
-#homepage, #board, #ui {
+#board, #ui {
     position: absolute;
     width: 100%;
     height: 100%;
     object-fit: contain;
     transform-origin: center;
+}
+
+#homepage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Changed from 'contain' to 'cover' */
+    top: 0;
+    left: 0;
 }
 
 #homepage { 
