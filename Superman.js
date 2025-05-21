@@ -158,6 +158,44 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
+    // Add to window.onload
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    function handleResize() {
+        const gameContainer = document.querySelector('.game-container');
+        const aspectRatio = 9/16;
+        
+        // Calculate scale based on window dimensions
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const scale = Math.min(windowWidth / 360, windowHeight / 640);
+        
+        // Apply scaling to the container
+        gameContainer.style.setProperty('--game-scale', scale);
+        
+        // Update internal dimensions
+        boardWidth = 360;
+        boardHeight = 640;
+        board.width = boardWidth;
+        board.height = boardHeight;
+        ui.width = boardWidth;
+        ui.height = boardHeight;
+    }
+    
+    // Orientation Check
+    function checkOrientation() {
+        const warning = document.getElementById('rotate-warning');
+        const gameContainer = document.querySelector('.game-container');
+        
+        if (window.matchMedia("(orientation: landscape)").matches && window.innerWidth < 1000) {
+            warning.style.display = 'block';
+            gameContainer.style.display = 'none';
+        } else {
+            warning.style.display = 'none';
+            gameContainer.style.display = 'block';
+        }
+    }
     // Event listeners
     startBtn.addEventListener("click", startGame);
     restartBtn.addEventListener("click", restartGame);
@@ -547,6 +585,13 @@ function handleKeyPress(e) {
 }
 
 function handleTouch(e) {
+    const rect = board.getBoundingClientRect();
+    const scaleX = board.width / rect.width;
+    const scaleY = board.height / rect.height;
+    
+    // Convert touch coordinates to game coordinates
+    const x = (e.touches[0].clientX - rect.left) * scaleX;
+    const y = (e.touches[0].clientY - rect.top) * scaleY;
     e.preventDefault(); // prevent scrolling on mobile
 
     if (isCountdownActive) return;
