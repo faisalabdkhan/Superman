@@ -2,7 +2,44 @@ body {
     margin: 0;
     overflow: hidden;
     background-color: #000;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.game-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 360px;
+    max-height: 640px;
+}
+
+.game-container {
+    position: relative;
+    width: 360px;
+    height: 640px;
+    background-color: #000;
+    transform-origin: center;
+}
+
+/* Responsive Scaling */
+@media (max-aspect-ratio: 9/16) {
+    /* Tall screens (typical mobile portrait) */
+    .game-container {
+        transform: scale(calc(100vh / 640));
+    }
+}
+
+@media (min-aspect-ratio: 9/16) {
+    /* Wide screens (typical desktop/landscape) */
+    .game-container {
+        transform: scale(calc(100vw / 360));
+    }
+}
+
 
 #board {
     background-image: url("images/backgrond.png");
