@@ -1,5 +1,5 @@
 // Game constants
-let scaleFactor = 1;
+
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
@@ -130,7 +130,7 @@ window.addEventListener('resize', handleResize);
 
 
 window.onload = function () {
-    handleResize();
+
     const container = document.querySelector('.game-container');
     const actualWidth = container.clientWidth;
     const actualHeight = container.clientHeight;
@@ -192,7 +192,7 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
-
+    handleResize();
 
     // Event listeners
     startBtn.addEventListener("click", startGame);
