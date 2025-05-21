@@ -1,4 +1,5 @@
 // Game constants
+let scaleFactor = 1;
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
@@ -114,15 +115,32 @@ const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
 
 window.onload = function () {
+    const container = document.querySelector('.game-container');
+    const actualWidth = container.clientWidth;
+    const actualHeight = container.clientHeight;
+    
+    scaleFactor = Math.min(
+        window.innerWidth / 360,
+        window.innerHeight / 640
+    );
+    
+    // Set up canvases
     board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth;
+    board.height = boardHeight * devicePixelRatio;
+    board.width = boardWidth * devicePixelRatio;
+    board.style.width = boardWidth + 'px';
+    board.style.height = boardHeight + 'px';
     context = board.getContext("2d");
+    context.scale(devicePixelRatio, devicePixelRatio);
 
+    // Repeat same scaling for UI canvas
     let uiCanvas = document.getElementById("ui");
-    uiCanvas.height = boardHeight;
-    uiCanvas.width = boardWidth;
+    uiCanvas.height = boardHeight * devicePixelRatio;
+    uiCanvas.width = boardWidth * devicePixelRatio;
+    uiCanvas.style.width = boardWidth + 'px';
+    uiCanvas.style.height = boardHeight + 'px';
     uiContext = uiCanvas.getContext("2d");
+    uiContext.scale(devicePixelRatio, devicePixelRatio);
 
     // Load images
 
@@ -176,6 +194,15 @@ window.onload = function () {
 
     showHomepage();
 };
+
+window.addEventListener('resize', () => {
+    scaleFactor = Math.min(
+        window.innerWidth / 360,
+        window.innerHeight / 640
+    );
+    
+    document.querySelector('.game-container').style.transform = `scale(${scaleFactor})`;
+});
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
