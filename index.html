@@ -25,30 +25,42 @@
             width: 360px;
             height: 640px;
             background-color: #000;
+            overflow: hidden;
 
         }
     
-        /* Mobile Portrait (default) */
-        @media (max-aspect-ratio: 9/16) {
-            .game-container {
-                transform: scale(calc(100vw / 360));
-            }
-        }
-    
-        /* Mobile Landscape & Desktop */
+        /* Responsive Scaling */
         @media (min-aspect-ratio: 9/16) {
             .game-container {
-                transform: scale(calc(100vh / 640));
+                width: calc(100vh * (9/16));
+                height: 100vh;
             }
         }
-    
-        /* Prevent scaling artifacts */
-        canvas {
-            image-rendering: -moz-crisp-edges;
-            image-rendering: pixelated;
+        
+        @media (max-aspect-ratio: 9/16) {
+            .game-container {
+                width: 100vw;
+                height: calc(100vw * (16/9));
+            }
         }
-
-        #homepage, #board, #ui {
+        
+        /* For landscape orientation on mobile */
+        @media screen and (orientation: landscape) and (max-width: 1000px) {
+            .game-container {
+                width: calc(100vh * (9/16));
+                height: 100vh;
+            }
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+                #homepage, #board, #ui {
             position: absolute;
             top: 0;
             left: 0;
