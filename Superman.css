@@ -6,6 +6,16 @@ body {
 
 #board {
     background-image: url("images/backgrond.png");
+    background-size: cover;
+}
+
+/* Add responsive font sizes */
+#powerup-count {
+    font-size: 3vw;
+}
+
+.ui-text {
+    font-size: 4vw;
 }
 
 /* Game Over Screen Elements */
