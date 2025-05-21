@@ -11,95 +11,67 @@
     <style>
         .game-container {
             position: relative;
-            width: 360px;
-            height: 640px;
-            margin: 0 auto;
+            width: 100vw;
+            height: calc(100vw * 16 / 9);
+            max-width: 100vh;
+            max-height: 100vh;
+            margin: auto;
             background-color: #000;
+            overflow: hidden;
         }
         
         #homepage, #board, #ui {
             position: absolute;
+            width: 100%;
+            height: 100%;
             top: 0;
             left: 0;
-            width: 360px;
-            height: 640px;
         }
         
-        #homepage { z-index: 10; }
-        #board { z-index: 1; }
-        #ui { z-index: 3; }
-
-        /* Button Positioning */
+        /* Button Positioning using percentages */
         #start-btn {
-            left: 90px;
-            top: 185px;
-            width: 180px;
-            height: 80px;
+            left: 25%;
+            top: 29%;
+            width: 50%;
+            height: 12.5%;
         }
         
         #restart-btn {
-            left: 95px;
-            top: 400px;
-            width: 80px;
-            height: 80px;
+            left: 26.4%;
+            top: 62.5%;
+            width: 22.2%;
+            height: 12.5%;
         }
-
+    
         #sound-btn-home, #mute-btn-home {
-            left: 5px;
-            top: 5px;
-            width: 40px;
-            height: 40px;
+            left: 1.4%;
+            top: 0.8%;
+            width: 11.1%;
+            height: 6.25%;
         }
-
+    
         #pause-btn, #play-btn {
-            right: 5px;
-            top: 5px;
-            width: 40px;
-            height: 40px;
+            right: 1.4%;
+            top: 0.8%;
+            width: 11.1%;
+            height: 6.25%;
         }
-
+    
         #sound-btn-gameover, #mute-btn-gameover {
-            left: 185px;
-            top: 400px;
-            width: 80px;
-            height: 80px;
+            left: 51.4%;
+            top: 62.5%;
+            width: 22.2%;
+            height: 12.5%;
         }
-
-        .pause-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 20;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
+    
+        .pause-overlay img {
+            width: 22.2%;
+            height: 12.5%;
+            margin: 0 4.2%;   
         }
-
-        .game-control {
-            position: absolute;
-            cursor: pointer;
-            z-index: 1000;
-            border: none;
-            background: transparent;
-            padding: 0;
-            display: none;
-        }
-
-        #board, #ui { display: none; }
-        #homepage { display: block; }
-
+    
         #powerup-count {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #FFD700;
-            font-size: 20px;
-            z-index: 100;
+            font-size: 3vw;
         }
     </style>
 </head>
