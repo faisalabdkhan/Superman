@@ -1,5 +1,6 @@
 // Game constants
-let boardWidth, boardHeight;
+let boardWidth = 360;
+let boardHeight = 640;
 let context;
 let uiContext;
 let homepage = document.getElementById("homepage");
