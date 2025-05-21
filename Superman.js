@@ -298,6 +298,8 @@ function startGame() {
 }
 
 function animateCountdown() {
+    context.fillStyle = "rgba(0, 0, 0, 0.5)";
+    context.fillRect(0, 0, boardWidth, boardHeight);
     if (!isCountdownActive) return;
 
     // Clear canvases
@@ -332,6 +334,8 @@ function animateCountdown() {
 }
 
 function update() {
+    uiContext.fillStyle = "rgba(0, 0, 0, 0.7)";
+    uiContext.fillRect(0, 0, boardWidth, 50);
     if (!gameStarted || gameOver || isPaused || isCountdownActive) return;
     animationFrameId = requestAnimationFrame(update);
     
@@ -347,14 +351,13 @@ function update() {
     }
 
     // UI elements
-    uiContext.fillStyle = "rgba(0, 0, 0, 0.5)";
-    uiContext.fillRect(0, 0, boardWidth, 50);
+
     uiContext.fillStyle = "#FFD700";
-    uiContext.font = "16px Arial";
-    uiContext.textAlign = "center";
-    uiContext.fillText(`HIGH: ${highScore}`, boardWidth / 2 - 140, 30);
-    uiContext.textAlign = "center";
-    uiContext.fillText(`LEVEL ${currentLevel}`, boardWidth / 2 , 30);
+    uiContext.font = "bold 20px Arial";
+    uiContext.textAlign = "left";
+    uiContext.fillText(`SCORE: ${Math.floor(score)}`, 10, 35);
+    uiContext.textAlign = "right";
+    uiContext.fillText(`HIGH: ${highScore}`, boardWidth - 10, 35);
 
     // Superman physics
     velocityY += gravity;
@@ -665,6 +668,22 @@ function endGame() {
         localStorage.setItem("supermanHighScore", highScore);
     }
 
+        // Show game over elements
+    uiContext.drawImage(gameOverImg, 
+        boardWidth/2 - 150,  // X position
+        boardHeight/2 - 100, // Y position
+        300,                 // Width
+        200                  // Height
+    );
+
+        // Show high score
+    uiContext.font = "bold 30px Arial";
+    uiContext.fillText(`HIGH SCORE: ${highScore}`, boardWidth/2, boardHeight/2 + 50);
+    
+    // Position restart button properly
+    restartBtn.style.left = "50%";
+    restartBtn.style.transform = "translateX(-50%)";
+    restartBtn.style.top = "60%";
 
     // Hide the pause button after the game ends
     pauseBtn.style.display = "none";  // Hide the pause button
