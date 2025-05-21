@@ -62,10 +62,10 @@
         }
         #homepage, #board, #ui {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 360px;
-            height: 640px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform-origin: center;
         }
         
         #homepage { z-index: 10; }
@@ -79,21 +79,31 @@
             width: 50%;
             height: auto;
         }
-        
         #restart-btn {
-            left: 35%;
+            left: 50%;
             top: 62%;
+            transform: translateX(-50%);
             width: 30%;
-            height: auto;
+        }
+        
+        #sound-btn-gameover, #mute-btn-gameover {
+            left: 50%;
+            top: 72%;
+            transform: translateX(-50%);
+            width: 30%;
         }
 
-        #sound-btn-home, #mute-btn-home {
-            left: 1.4%;
-            top: 0.8%;
-            width: 11%;
-            height: auto;
+        /* Add this for button grouping */
+        .game-over-elements {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
         }
-
+        
         #pause-btn, #play-btn {
             right: 1.4%;
             top: 0.8%;
