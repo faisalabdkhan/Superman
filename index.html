@@ -3,115 +3,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
     <title>Superman Game</title>
     <link rel="icon" type="image/png" href="images/fav6.png">
     <link rel="stylesheet" href="Superman.css">
     <style>
         .game-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(var(--game-scale));
+            position: relative;
             width: 360px;
             height: 640px;
+            margin: 0 auto;
             background-color: #000;
-            overflow: hidden;
-            transform-origin: center center;
         }
         
-        /* Responsive Scaling */
-        @media (max-aspect-ratio: 9/16) {
-            .game-container {
-                --game-scale: calc(100vw / 360);
-            }
+        #homepage, #board, #ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 360px;
+            height: 640px;
         }
         
-        @media (min-aspect-ratio: 9/16) {
-            .game-container {
-                --game-scale: calc(100vh / 640);
-            }
-        }
-        
+        #homepage { z-index: 10; }
+        #board { z-index: 1; }
+        #ui { z-index: 3; }
+
         /* Button Positioning */
-        /* New CSS additions */
         #start-btn {
-            left: 50%;
-            top: 40%;
-            transform: translateX(-50%);
-            width: 50%;
-            max-width: 180px;
-            background: none;
-            border: none;
-            padding: 0;
+            left: 90px;
+            top: 185px;
+            width: 180px;
+            height: 80px;
         }
         
-        .sound-control {
-            top: 2%;
-            width: 10%;
-            max-width: 40px;
-            left: 2%;
-            z-index: 1000;
-        }
-        
-        .button-img {
-            width: 100%;
-            height: auto;
-            image-rendering: crisp-edges;
-        }
-        
-        /* Remove button backgrounds */
-        .game-control {
-            background: none !important;
-            border: none !important;
-            box-shadow: none !important;
+        #restart-btn {
+            left: 95px;
+            top: 400px;
+            width: 80px;
+            height: 80px;
         }
 
-        button.game-control {
-            background: transparent !important;
-            border: none !important;
-            outline: none !important;
+        #sound-btn-home, #mute-btn-home {
+            left: 5px;
+            top: 5px;
+            width: 40px;
+            height: 40px;
         }
-        
-        button.game-control img {
-            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+
+        #pause-btn, #play-btn {
+            right: 5px;
+            top: 5px;
+            width: 40px;
+            height: 40px;
         }
-        /* Canvas scaling */
-        #board, #ui {
+
+        #sound-btn-gameover, #mute-btn-gameover {
+            left: 185px;
+            top: 400px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            image-rendering: crisp-edges;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 20;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
         }
-        
-        /* Homepage image */
-        #homepage {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+
+        .game-control {
+            position: absolute;
+            cursor: pointer;
+            z-index: 1000;
+            border: none;
+            background: transparent;
+            padding: 0;
+            display: none;
+        }
+
+        #board, #ui { display: none; }
+        #homepage { display: block; }
+
+        #powerup-count {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #FFD700;
+            font-size: 20px;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
-    <div id="rotate-warning" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: white; text-align: center; padding-top: 20%; z-index: 1000; font-family: Arial;">
-    Please rotate your device to portrait mode!
-    </div>
 
     <div class="game-container">
-        <img id="homepage" src="images/AMMAN.png" style="object-fit: contain">
+        <img id="homepage" src="images/AMMAN.png">
         <canvas id="board"></canvas>
         <canvas id="ui"></canvas>
 
         <!-- Game Controls -->
-        <button id="start-btn" class="game-control">
-            <img src="images/start.png" class="button-img">
+        <button id="start-btn" class="game-control" style="left: 90px; top: 210px;">
+            <img src="images/start.png" width="140" height="60">
         </button>
         <button id="restart-btn" class="game-control"><img src="images/retry.png" width="80" height="80"></button>
         
         
         <!-- Sound Controls -->
-        <img src="images/sound.png" id="sound-btn-home" class="game-control sound-control">
-        <img src="images/mute.png" id="mute-btn-home" class="game-control sound-control">
+        <img src="images/sound.png" id="sound-btn-home" class="game-control">
+        <img src="images/mute.png" id="mute-btn-home" class="game-control">
         <img src="images/pause.png" id="pause-btn" class="game-control">
         <img src="images/play.png" id="play-btn" class="game-control">
         <img src="images/sound.png" id="sound-btn-gameover" class="game-control">
