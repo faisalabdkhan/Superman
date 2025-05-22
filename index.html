@@ -1,4 +1,3 @@
-<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,40 +8,32 @@
     <link rel="stylesheet" href="Superman.css">
 </head>
 <body>
-    <div class="game-wrapper">
-        <div class="game-container">
-            <img id="homepage" src="images/AMMAN.png">
-            <canvas id="board"></canvas>
-            <canvas id="ui"></canvas>
-    
-            <!-- Game Controls -->
-            <button id="start-btn" class="game-control" style="left: 90px; top: 210px;">
-                <img src="images/start.png" width="140" height="60">
-            </button>
-            <button id="restart-btn" class="game-control"><img src="images/retry.png" width="80" height="80"></button>
-            
-            
-            <!-- Sound Controls -->
-            <img src="images/sound.png" id="sound-btn-home" class="game-control">
-            <img src="images/mute.png" id="mute-btn-home" class="game-control">
-            <img src="images/pause.png" id="pause-btn" class="game-control">
-            <img src="images/play.png" id="play-btn" class="game-control">
-            <img src="images/sound.png" id="sound-btn-gameover" class="game-control">
-            <img src="images/mute.png" id="mute-btn-gameover" class="game-control">
-    
-            <!-- Pause Overlay -->
-            <div id="pause-overlay" class="pause-overlay">
-                <img src="images/play.png" id="resume-btn" class="game-control" width="80" height="80">
-                <img src="images/sound.png" id="sound-btn-pause" class="game-control" width="80" height="80">
-                <img src="images/mute.png" id="mute-btn-pause" class="game-control" width="80" height="80">
-                <img id="play-btn" src="images/play.png" alt="Play" style="display: none; width: 50px; height: 50px; cursor: pointer;" />
-            </div>
-                <!-- Add Game Over Elements Here -->
-            <div class="game-over-elements">
-                <button id="restart-btn" class="game-control"><img src="images/retry.png" width="80" height="80"></button>
-                <img src="images/sound.png" id="sound-btn-gameover" class="game-control">
-                <img src="images/mute.png" id="mute-btn-gameover" class="game-control">
-            </div>
+    <div class="game-container">
+        <img id="homepage" src="images/AMMAN.png">
+        <canvas id="board"></canvas>
+        <canvas id="ui"></canvas>
+
+        <!-- Game Controls -->
+        <button id="start-btn" class="game-control">
+            <img src="images/start.png" alt="Start">
+        </button>
+        <button id="restart-btn" class="game-control">
+            <img src="images/retry.png" alt="Retry">
+        </button>
+        
+        <!-- Sound Controls -->
+        <img src="images/sound.png" id="sound-btn-home" class="game-control" alt="Sound">
+        <img src="images/mute.png" id="mute-btn-home" class="game-control" alt="Mute">
+        <img src="images/pause.png" id="pause-btn" class="game-control" alt="Pause">
+        <img src="images/play.png" id="play-btn" class="game-control" alt="Play">
+        <img src="images/sound.png" id="sound-btn-gameover" class="game-control" alt="Sound Game Over">
+        <img src="images/mute.png" id="mute-btn-gameover" class="game-control" alt="Mute Game Over">
+
+        <!-- Pause Overlay -->
+        <div id="pause-overlay" class="pause-overlay">
+            <img src="images/play.png" id="resume-btn" class="game-control" alt="Resume">
+            <img src="images/sound.png" id="sound-btn-pause" class="game-control" alt="Sound">
+            <img src="images/mute.png" id="mute-btn-pause" class="game-control" alt="Mute">
         </div>
     </div>
     <script src="Superman.js"></script>
