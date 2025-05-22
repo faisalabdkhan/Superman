@@ -117,6 +117,13 @@ window.addEventListener('resize', handleResize);
 handleResize();
 
 function handleResize() {
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    const scale = Math.min(vw / 360, vh / 640);
+      
+    board.style.transform = `scale(${scale})`;
+    ui.style.transform = `scale(${scale})`;
+    }
     const gameContainer = document.querySelector('.game-container');
     const aspectRatio = 9/16;
     
@@ -143,33 +150,28 @@ function handleResize() {
 
 
 window.onload = function () {
-
-    const container = document.querySelector('.game-container');
-    const actualWidth = container.clientWidth;
-    const actualHeight = container.clientHeight;
-    
-    scaleFactor = Math.min(
-        window.innerWidth / 360,
-        window.innerHeight / 640
-    );
-    
-    // Set up canvases
-    board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth * devicePixelRatio;
-    board.style.width = boardWidth + 'px';
-    board.style.height = boardHeight + 'px';
-    context = board.getContext("2d");
-    context.scale(devicePixelRatio, devicePixelRatio);
-
-    // Repeat same scaling for UI canvas
-    let uiCanvas = document.getElementById("ui");
-    uiCanvas.height = boardHeight * devicePixelRatio;
-    uiCanvas.width = boardWidth * devicePixelRatio;
-    uiCanvas.style.width = boardWidth + 'px';
-    uiCanvas.style.height = boardHeight + 'px';
-    uiContext = uiCanvas.getContext("2d");
-    uiContext.scale(devicePixelRatio, devicePixelRatio);
+      // Get viewport dimensions
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      
+      // Calculate scale factor
+    const scale = Math.min(vw / 360, vh / 640);
+      
+      // Set canvas dimensions
+    board.width = 360 * devicePixelRatio;
+    board.height = 640 * devicePixelRatio;
+    board.style.width = '360px';
+    board.style.height = '640px';
+    board.style.transform = `scale(${scale})`;
+    board.style.transformOrigin = 'top left';
+      
+      // Repeat for UI canvas
+    ui.width = 360 * devicePixelRatio;
+    ui.height = 640 * devicePixelRatio;
+    ui.style.width = '360px';
+    ui.style.height = '640px';
+    ui.style.transform = `scale(${scale})`;
+    ui.style.transformOrigin = 'top left';
 
     // Load images
 
