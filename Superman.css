@@ -1,11 +1,6 @@
 /* Superman.css */
-* {
-    box-sizing: border-box;
-}
-
 body {
     margin: 0;
-    padding: 0;
     overflow: hidden;
     width: 100vw;
     height: 100vh;
@@ -17,77 +12,101 @@ body {
 
 .game-wrapper {
     position: relative;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    height: 100%;
+    max-width: 360px;
+    max-height: 640px;
 }
 
 .game-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 360px;
+    height: 640px;
     background-color: #000;
     overflow: hidden;
+    transform-origin: center;
 }
 
-/* Remove fixed dimensions and scaling constraints */
-@media screen and (orientation: portrait) {
+/* Responsive Scaling */
+@media (min-aspect-ratio: 9/16) {
     .game-container {
-        width: 100vw;
-        height: 100vh;
+        width: calc(100vh * (9/16));
+        height: auto;
     }
 }
 
-@media screen and (orientation: landscape) {
+@media (max-aspect-ratio: 9/16) {
     .game-container {
         width: 100vw;
-        height: 100vh;
+        height: calc(100vw * (16/9));
     }
 }
 
-/* Canvas Styles - Make them fill the entire screen */
-canvas {
+@media screen and (orientation: landscape) and (max-width: 1000px) {
+    .game-container {
+        width: calc(100vh * (9/16));
+        height: auto;
+    }
+}
+
+#board {
+    background-image: url("images/backgrond.png");
+}
+
+/* Game Over Elements */
+.game-over-elements {
+    display: none;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw !important;
-    height: 100vh !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Canvas Styles */
+canvas {
+    width: 100%;
+    height: 100%;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    will-change: transform;
+    image-rendering: optimizeSpeed;
 }
 
 /* Layer Positioning */
 #board, #ui {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
 }
 
 #homepage {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
+}
+
+#homepage { 
     z-index: 1;
     display: none;
 }
 
 #board { 
-    z-index: 2;
+    z-index: 1;
     display: none;
-    background-image: url("images/backgrond.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 #ui { 
@@ -144,11 +163,11 @@ canvas {
 
 /* Pause Overlay */
 .pause-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.7);
     z-index: 20;
     display: none;
@@ -163,18 +182,15 @@ canvas {
     margin: 0 15px;
 }
 
-/* Game Over Elements */
-.game-over-elements {
-    display: none;
+/* Powerup Counter */
+#powerup-count {
     position: absolute;
-    top: 50%;
+    top: 10px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 20;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-size: 20px;
+    z-index: 100;
 }
 
 /* Animations */
@@ -205,22 +221,4 @@ canvas {
 #sound-btn-gameover,
 #restart-btn {
     display: none;
-}
-
-/* Mobile Responsive */
-@media screen and (max-width: 768px) {
-    .game-control {
-        padding: 10px;
-    }
-    
-    #start-btn {
-        left: 20%;
-        top: 35%;
-        width: 60%;
-    }
-    
-    #sound-btn-home, #mute-btn-home,
-    #pause-btn, #play-btn {
-        width: 15%;
-    }
 }
