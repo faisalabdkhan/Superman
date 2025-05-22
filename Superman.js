@@ -1,5 +1,4 @@
 // Game constants
-
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
@@ -112,64 +111,18 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
-// Add to window.onload function
-window.addEventListener('resize', handleResize);
-handleResize();
-
-function handleResize() {
-    const gameContainer = document.querySelector('.game-container');
-    const aspectRatio = 9/16;
-    
-    if (window.matchMedia("(orientation: portrait)").matches) {
-        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-    } else {
-        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-    }
-
-    // Update canvas scale
-    const scale = Math.min(
-        gameContainer.offsetWidth / 360,
-        gameContainer.offsetHeight / 640
-    );
-    
-    [board, ui].forEach(element => {
-        element.style.transform = `scale(${scale})`;
-        element.style.transformOrigin = 'top left';
-    });
-    homepage.style.transform = '';
-}
 
 
 window.onload = function () {
-
-    const container = document.querySelector('.game-container');
-    const actualWidth = container.clientWidth;
-    const actualHeight = container.clientHeight;
-    
-    scaleFactor = Math.min(
-        window.innerWidth / 360,
-        window.innerHeight / 640
-    );
-    
-    // Set up canvases
     board = document.getElementById("board");
     board.height = boardHeight;
-    board.width = boardWidth * devicePixelRatio;
-    board.style.width = boardWidth + 'px';
-    board.style.height = boardHeight + 'px';
+    board.width = boardWidth;
     context = board.getContext("2d");
-    context.scale(devicePixelRatio, devicePixelRatio);
 
-    // Repeat same scaling for UI canvas
     let uiCanvas = document.getElementById("ui");
-    uiCanvas.height = boardHeight * devicePixelRatio;
-    uiCanvas.width = boardWidth * devicePixelRatio;
-    uiCanvas.style.width = boardWidth + 'px';
-    uiCanvas.style.height = boardHeight + 'px';
+    uiCanvas.height = boardHeight;
+    uiCanvas.width = boardWidth;
     uiContext = uiCanvas.getContext("2d");
-    uiContext.scale(devicePixelRatio, devicePixelRatio);
 
     // Load images
 
@@ -205,8 +158,6 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
-    handleResize();
-
     // Event listeners
     startBtn.addEventListener("click", startGame);
     restartBtn.addEventListener("click", restartGame);
@@ -223,11 +174,8 @@ window.onload = function () {
     document.addEventListener("touchstart", handleTouch);
 
 
-
     showHomepage();
 };
-
-
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
@@ -246,7 +194,7 @@ function toggleSound() {
 
     if (soundEnabled) bgMusic.play();
     else bgMusic.pause();
-}
+} 
 
 function updateSoundDisplay() {
     const showSound = soundEnabled;
@@ -521,8 +469,6 @@ function updateDifficulty() {
 }
 
 function placePipes() {
-
-    pipeArray.push(topPipe, bottomPipe);
     if (gameOver || !gameStarted) return;
     const currentGap = basePipeGap;
     let minPipeY = -pipeHeight + 50; // Original minimum Y position
@@ -530,8 +476,8 @@ function placePipes() {
     let randomPipeY = Math.random() * (maxPipeY - minPipeY) + minPipeY;
 
     let gapTopY = randomPipeY + pipeHeight;
-    let gapBottomY = gapTopY + basePipeGap;
-    lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
+let gapBottomY = gapTopY + basePipeGap;
+lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
 
 
     let obstacleChance = baseObstacleChance + currentLevel * obstacleIncreasePerLevel;
@@ -551,7 +497,6 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
-        
     });
 
     pipeArray.push({
@@ -561,9 +506,7 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
-        
     });
-
 }
 
 function setDynamicPipeInterval() {
