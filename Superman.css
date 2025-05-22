@@ -59,7 +59,7 @@ canvas {
   top: 40vh;
   left: 30vw;
   width: 40vw;
-  max-width: 200px;
+  max-width: 150px;
   height: auto;
 }
 
@@ -69,7 +69,7 @@ canvas {
   top: 2vh;
   left: 2vw;
   width: 10vw;
-  max-width: 50px;
+  max-width: 40px;
   height: auto;
 }
 
@@ -103,7 +103,7 @@ canvas {
   left: 50%;
   transform: translateX(-50%);
   width: 15vw;
-  max-width: 80px;
+  max-width: 40px;
   height: auto;
 }
 
@@ -113,7 +113,7 @@ canvas {
   left: 50%;
   transform: translateX(-50%);
   width: 20vw;
-  max-width: 100px;
+  max-width: 80px;
   height: auto;
 }
 
@@ -139,6 +139,19 @@ canvas {
 }
 
 /* Landscape tweaks */
+@media (min-width: 768px) {
+  .game-container {
+    width: 360px; /* 9:16 aspect ratio base width */
+    height: 640px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #333;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+  
 @media (orientation: landscape) {
   #start-btn {
     top: 30vh;
@@ -151,3 +164,5 @@ canvas {
     max-width: 60px;
   }
 }
+
+
