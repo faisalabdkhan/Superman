@@ -134,10 +134,11 @@ function handleResize() {
         gameContainer.offsetHeight / 640
     );
     
-    [board, ui, homepage].forEach(element => {
+    [board, ui].forEach(element => {
         element.style.transform = `scale(${scale})`;
         element.style.transformOrigin = 'top left';
     });
+    homepage.style.transform = '';
 }
 
 
