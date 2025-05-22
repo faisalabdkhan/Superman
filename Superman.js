@@ -1,4 +1,5 @@
 // Game constants
+
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
@@ -111,18 +112,64 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
+// Add to window.onload function
+window.addEventListener('resize', handleResize);
+handleResize();
+
+function handleResize() {
+    const gameContainer = document.querySelector('.game-container');
+    const aspectRatio = 9/16;
+    
+    if (window.matchMedia("(orientation: portrait)").matches) {
+        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
+        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
+    } else {
+        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
+        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
+    }
+
+    // Update canvas scale
+    const scale = Math.min(
+        gameContainer.offsetWidth / 360,
+        gameContainer.offsetHeight / 640
+    );
+    
+    [board, ui].forEach(element => {
+        element.style.transform = `scale(${scale})`;
+        element.style.transformOrigin = 'top left';
+    });
+    homepage.style.transform = '';
+}
 
 
 window.onload = function () {
+
+    const container = document.querySelector('.game-container');
+    const actualWidth = container.clientWidth;
+    const actualHeight = container.clientHeight;
+    
+    scaleFactor = Math.min(
+        window.innerWidth / 360,
+        window.innerHeight / 640
+    );
+    
+    // Set up canvases
     board = document.getElementById("board");
     board.height = boardHeight;
-    board.width = boardWidth;
+    board.width = boardWidth * devicePixelRatio;
+    board.style.width = boardWidth + 'px';
+    board.style.height = boardHeight + 'px';
     context = board.getContext("2d");
+    context.scale(devicePixelRatio, devicePixelRatio);
 
+    // Repeat same scaling for UI canvas
     let uiCanvas = document.getElementById("ui");
-    uiCanvas.height = boardHeight;
-    uiCanvas.width = boardWidth;
+    uiCanvas.height = boardHeight * devicePixelRatio;
+    uiCanvas.width = boardWidth * devicePixelRatio;
+    uiCanvas.style.width = boardWidth + 'px';
+    uiCanvas.style.height = boardHeight + 'px';
     uiContext = uiCanvas.getContext("2d");
+    uiContext.scale(devicePixelRatio, devicePixelRatio);
 
     // Load images
 
@@ -158,6 +205,8 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
+    handleResize();
+
     // Event listeners
     startBtn.addEventListener("click", startGame);
     restartBtn.addEventListener("click", restartGame);
@@ -174,8 +223,11 @@ window.onload = function () {
     document.addEventListener("touchstart", handleTouch);
 
 
+
     showHomepage();
 };
+
+
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
@@ -194,7 +246,7 @@ function toggleSound() {
 
     if (soundEnabled) bgMusic.play();
     else bgMusic.pause();
-} 
+}
 
 function updateSoundDisplay() {
     const showSound = soundEnabled;
@@ -469,6 +521,8 @@ function updateDifficulty() {
 }
 
 function placePipes() {
+
+    pipeArray.push(topPipe, bottomPipe);
     if (gameOver || !gameStarted) return;
     const currentGap = basePipeGap;
     let minPipeY = -pipeHeight + 50; // Original minimum Y position
@@ -476,8 +530,8 @@ function placePipes() {
     let randomPipeY = Math.random() * (maxPipeY - minPipeY) + minPipeY;
 
     let gapTopY = randomPipeY + pipeHeight;
-let gapBottomY = gapTopY + basePipeGap;
-lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
+    let gapBottomY = gapTopY + basePipeGap;
+    lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
 
 
     let obstacleChance = baseObstacleChance + currentLevel * obstacleIncreasePerLevel;
@@ -497,6 +551,7 @@ lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
+        
     });
 
     pipeArray.push({
@@ -506,7 +561,9 @@ lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
+        
     });
+
 }
 
 function setDynamicPipeInterval() {
@@ -580,7 +637,6 @@ function handleTouch(e) {
 
 
 function restartGame() {
-    document.getElementById("game-over-ui").style.display = "none";
     if (pipeInterval) {
         clearInterval(pipeInterval);
         pipeInterval = null;
@@ -614,20 +670,47 @@ function restartGame() {
 
 function endGame() {
     gameOver = true;
-    
+    // highScore = Math.max(highScore, Math.floor(score));
+
     if (score > highScore) {
         highScore = score;
         localStorage.setItem("supermanHighScore", highScore);
     }
 
-    // Hide game elements
-    pauseBtn.style.display = "none";
+
+    // Hide the pause button after the game ends
+    pauseBtn.style.display = "none";  // Hide the pause button
+
+    // Keep board visible for background
+    board.style.display = "block";  // Changed from "none"
+    homepage.style.display = "none";
     
-    // Show game over UI
-    document.getElementById("game-over-ui").style.display = "flex";
-    document.querySelector(".current-score").textContent = Math.floor(score);
-    document.querySelector(".high-score span").textContent = highScore;
+    // Show UI canvas and game over elements
+    ui.style.display = "block";
+    restartBtn.style.display = "block";
     
+    // Clear and redraw UI
+    uiContext.clearRect(0, 0, board.width, board.height);
+    
+    // Draw semi-transparent overlay
+    uiContext.fillStyle = "rgba(0, 0, 0, 0.5)";  // Reduced opacity to 50%
+    uiContext.fillRect(0, 0, boardWidth, boardHeight);
+    
+    const centerX = boardWidth / 2;
+    
+    // Game Over Image
+    uiContext.drawImage(gameOverImg, centerX - 225, 95, 450, 200);
+    
+    // Scores
+    uiContext.fillStyle = "#FFD700";
+    uiContext.font = "bold 45px 'Arial Black'";
+    uiContext.textAlign = "center";
+    uiContext.fillText(Math.floor(score), centerX, 100);
+    
+    // High Score
+    uiContext.drawImage(highScoreImg, centerX - 110, 280, 150, 80);
+    uiContext.fillText(highScore, centerX + 75, 330);
+
     // Sound controls
     soundBtnGameover.style.display = soundEnabled ? "block" : "none";
     muteBtnGameover.style.display = soundEnabled ? "none" : "block";
@@ -640,6 +723,7 @@ function endGame() {
         hitSound.currentTime = 0;
         hitSound.play();
     }
+    document.getElementById("powerup-count").style.display = "none";
 }
 
 // New helper functions
@@ -728,4 +812,4 @@ function showHomepage() {
     Superman.y = SupermanY;
     pauseOverlay.style.display = "none";
 
-}  
+} 
