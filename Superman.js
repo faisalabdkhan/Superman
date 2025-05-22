@@ -551,6 +551,7 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
+        type: 'top'
     });
 
     pipeArray.push({
@@ -560,6 +561,7 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
+        type: 'bottom'
     });
 
 }
