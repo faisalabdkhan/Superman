@@ -1,144 +1,198 @@
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* Superman.css */
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: sans-serif;
-            background-color: #000;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background: #000;
-        }
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: sans-serif;
+    background-color: #000;
+}
 
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw !important;
-            height: 100vh !important;
-            will-change: transform;
-            image-rendering: optimizeSpeed;
-        }
+.game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #000;
+}
 
-        #board {
-            background-image: url("images/backgrond.png");
-            background-size: cover;
-            background-position: center;
-            z-index: 1;
-        }
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    will-change: transform;
+    image-rendering: optimizeSpeed;
+}
 
-        #ui {
-            z-index: 15;
-        }
+#board {
+    background-image: url("images/backgrond.png");
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    display: none;
+}
 
-        #homepage {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 10;
-        }
+#ui {
+    z-index: 15;
+    display: none;
+}
 
-        .game-control {
-            position: absolute;
-            cursor: pointer;
-            z-index: 20;
-            border: none;
-            background: transparent;
-            padding: 0;
-            display: none;
-            pointer-events: auto;
-        }
+#homepage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 10;
+    display: block;
+}
 
-        #start-btn {
-            top: 40vh;
-            left: 30vw;
-            width: 40vw;
-            max-width: 200px;
-        }
+.game-control {
+    position: absolute;
+    cursor: pointer;
+    z-index: 20;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: none;
+    pointer-events: auto;
+}
 
-        #start-btn img {
-            width: 100%;
-            height: auto;
-        }
+#start-btn {
+    top: 40vh;
+    left: 30vw;
+    width: 40vw;
+    max-width: 200px;
+    display: block;
+}
 
-        #restart-btn {
-            bottom: 10vh;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20vw;
-            max-width: 100px;
-        }
+#start-btn img {
+    width: 100%;
+    height: auto;
+}
 
-        #restart-btn img {
-            width: 100%;
-            height: auto;
-        }
+#restart-btn {
+    bottom: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20vw;
+    max-width: 100px;
+}
 
-        #pause-btn,
-        #play-btn,
-        #sound-btn-home,
-        #mute-btn-home {
-            top: 2vh;
-            right: 2vw;
-            width: 10vw;
-            max-width: 60px;
-        }
+#restart-btn img {
+    width: 100%;
+    height: auto;
+}
 
-        #sound-btn-gameover,
-        #mute-btn-gameover {
-            bottom: 15vh;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15vw;
-            max-width: 80px;
-            height: auto;
-        }
+#pause-btn,
+#play-btn {
+    top: 2vh;
+    right: 2vw;
+    width: 10vw;
+    max-width: 60px;
+}
 
-        #pause-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 25;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 2vh;
-        }
+#sound-btn-home,
+#mute-btn-home {
+    top: 2vh;
+    left: 2vw;
+    width: 10vw;
+    max-width: 60px;
+}
 
-        #pause-overlay img {
-            width: 15vw;
-            max-width: 80px;
-            height: auto;
-        }
+#sound-btn-gameover,
+#mute-btn-gameover {
+    bottom: 15vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15vw;
+    max-width: 80px;
+    height: auto;
+}
 
-        /* Hide elements initially */
-        #mute-btn-home,
-        #play-btn,
-        #mute-btn-gameover,
-        #restart-btn,
-        #sound-btn-gameover {
-            display: none;
-        }
+#pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 25;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2vh;
+}
 
-        @media (orientation: landscape) {
-            #start-btn {
-                top: 30vh;
-                left: 40vw;
-                width: 20vw;
-            }
-        }
+#pause-overlay img {
+    width: 15vw;
+    max-width: 80px;
+    height: auto;
+}
+
+/* Initially hide these elements */
+#mute-btn-home,
+#play-btn,
+#mute-btn-gameover,
+#restart-btn,
+#sound-btn-gameover {
+    display: none;
+}
+
+/* Animations */
+@keyframes enemyFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.enemy {
+    animation: enemyFloat 2s ease-in-out infinite;
+}
+
+@keyframes shield-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.powerup-shield {
+    animation: shield-pulse 1.5s infinite;
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (orientation: landscape) {
+    #start-btn {
+        top: 30vh;
+        left: 40vw;
+        width: 20vw;
+    }
+    
+    #pause-overlay img {
+        width: 10vw;
+        max-width: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    #start-btn {
+        width: 50vw;
+        left: 25vw;
+    }
+    
+    #sound-btn-home,
+    #mute-btn-home,
+    #pause-btn,
+    #play-btn {
+        width: 12vw;
+        max-width: 50px;
+    }
+}
