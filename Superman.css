@@ -1,35 +1,18 @@
 /* Superman.css */
-body {
+
+html, body {
     margin: 0;
-    overflow: hidden;
+    padding: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.game-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: 360px;
-    max-height: 640px;
-}
-
-.game-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 360px;
-    height: 640px;
-    background-color: #000;
     overflow: hidden;
-    transform-origin: center;
 }
-
+.game-wrapper, .game-container {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+}
 /* Responsive Scaling */
 @media (min-aspect-ratio: 9/16) {
     .game-container {
@@ -72,10 +55,9 @@ body {
 
 /* Canvas Styles */
 canvas {
-  position: absolute;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain;
+    display: block;
+    width: 100vw;
+    height: 100vh;
 }
 
 /* Layer Positioning */
