@@ -1,171 +1,224 @@
+/* Superman.css */
 body {
-  margin: 0;
-  overflow: hidden;
-  background-color: #000;
+    margin: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-canvas {
-  will-change: transform;
-  image-rendering: optimizeSpeed;
-  position: absolute;
-  top: 0;
-  left: 0;
-   width: 100vw !important;
-  height: 100vh !important;
+.game-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 360px;
+    max-height: 640px;
 }
 
-/* Background */
-#board {
-  background-image: url("images/backgrond.png");
-  background-size: cover;
-  background-position: center;
-}
-
-/* Home Screen */
-#homepage {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 10;
-}
-
-/* UI Layer */
-#ui {
-  z-index: 15;
-}
-
-/* Hide default buttons initially */
-#mute-btn-home,
-#play-btn,
-#mute-btn-gameover {
-  display: none;
-}
-
-#restart-btn,
-#sound-btn-gameover {
-  display: none;
-}
-
-/* Control Buttons Base */
-.game-control {
-  position: absolute;
-  pointer-events: auto;
-  z-index: 20;
-}
-
-/* Start Button */
-#start-btn {
-  top: 40vh;
-  left: 30vw;
-  width: 40vw;
-  max-width: 150px;
-  height: auto;
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-/* Sound Control */
-#sound-btn-home,
-#mute-btn-home {
-  top: 2vh;
-  left: 2vw;
-  width: 10vw;
-  max-width: 40px;
-  height: auto;
-}
-
-/* Pause Overlay */
-#pause-overlay {
-  display: none;
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 25;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 3vh;
-}
-
-#pause-overlay img {
-  width: 15vw;
-  max-width: 80px;
-  height: auto;
-}
-
-/* Game Over Sound Buttons */
-#sound-btn-gameover,
-#mute-btn-gameover {
-  bottom: 15vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 15vw;
-  max-width: 40px;
-  height: auto;
-}
-
-/* Restart Button */
-#restart-btn {
-  bottom: 10vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20vw;
-  max-width: 80px;
-  height: auto;
-}
-
-/* Animations */
-@keyframes enemyFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.enemy {
-  animation: enemyFloat 2s ease-in-out infinite;
-}
-
-@keyframes shield-pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.powerup-shield {
-  animation: shield-pulse 1.5s infinite;
-  pointer-events: none;
-}
-
-/* Landscape tweaks */
-@media (min-width: 768px) {
-  .game-container {
-    width: 360px; /* 9:16 aspect ratio base width */
+.game-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 360px;
     height: 640px;
-    margin: auto;
+    background-color: #000;
+    overflow: hidden;
+    transform-origin: center;
+}
+
+/* Responsive Scaling */
+@media (min-aspect-ratio: 9/16) {
+    .game-container {
+        width: calc(100vh * (9/16));
+        height: auto;
+    }
+}
+
+@media (max-aspect-ratio: 9/16) {
+    .game-container {
+        width: 100vw;
+        height: calc(100vw * (16/9));
+    }
+}
+
+@media screen and (orientation: landscape) and (max-width: 1000px) {
+    .game-container {
+        width: calc(100vh * (9/16));
+        height: auto;
+    }
+}
+
+#board {
+    background-image: url("images/backgrond.png");
+}
+
+/* Game Over Elements */
+.game-over-elements {
+    display: none;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid #333;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  }
-  
-@media (orientation: landscape) {
-  #start-btn {
-    top: 30vh;
-    left: 40vw;
-    width: 20vw;
-  }
-
-  #pause-overlay img {
-    width: 10vw;
-    max-width: 60px;
-  }
+    z-index: 20;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
 }
 
+/* Canvas Styles */
+canvas {
+    width: 100%;
+    height: 100%;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    will-change: transform;
+    image-rendering: optimizeSpeed;
+}
 
+/* Layer Positioning */
+#board, #ui {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
+}
+
+#homepage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
+}
+
+#homepage { 
+    z-index: 1;
+    display: none;
+}
+
+#board { 
+    z-index: 1;
+    display: none;
+}
+
+#ui { 
+    z-index: 3;
+    display: none;
+}
+
+/* Button Styles */
+.game-control {
+    position: absolute;
+    cursor: pointer;
+    z-index: 1000;
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: none;
+    pointer-events: auto;
+}
+
+#start-btn {
+    left: 25%;
+    top: 32%;
+    width: 50%;
+    height: auto;
+}
+
+#restart-btn {
+    left: 50%;
+    top: 62%;
+    transform: translateX(-50%);
+    width: 30%;
+}
+
+#sound-btn-home, #mute-btn-home {
+    left: 1.4%;
+    top: 0.8%;
+    width: 11%;
+    height: auto;
+}
+
+#pause-btn, #play-btn {
+    right: 1.4%;
+    top: 0.8%;
+    width: 11%;
+    height: auto;
+}
+
+#sound-btn-gameover, #mute-btn-gameover {
+    left: 50%;
+    top: 72%;
+    transform: translateX(-50%);
+    width: 30%;
+}
+
+/* Pause Overlay */
+.pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 20;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.pause-overlay img {
+    width: 80px;
+    height: 80px;
+    margin: 0 15px;
+}
+
+/* Powerup Counter */
+#powerup-count {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-size: 20px;
+    z-index: 100;
+}
+
+/* Animations */
+@keyframes enemyFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.enemy {
+    animation: enemyFloat 2s ease-in-out infinite;
+}
+
+@keyframes shield-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.powerup-shield {
+    animation: shield-pulse 1.5s infinite;
+    pointer-events: none;
+}
+
+/* Visibility Controls */
+#mute-btn-home,
+#play-btn,
+#mute-btn-gameover,
+#sound-btn-gameover,
+#restart-btn {
+    display: none;
+}
