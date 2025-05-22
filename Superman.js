@@ -381,7 +381,17 @@ function update() {
     for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
+
+        if (pipe.isBottom) {
+        // Flip the bottom pipe vertically
+        context.save();
+        context.translate(pipe.x, pipe.y + pipe.height);
+        context.scale(1, -1);
+        context.drawImage(pipe.img, 0, 0, pipe.width, pipe.height);
+        context.restore();
+    } else {
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+    }
 
         if (!pipe.passed && Superman.x > pipe.x + pipe.width) {
             score += 0.5;
@@ -551,7 +561,7 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
-        type: 'top'
+        isBottom: false
     });
 
     pipeArray.push({
@@ -561,7 +571,7 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
-        type: 'bottom'
+        isBottom: true 
     });
 
 }
