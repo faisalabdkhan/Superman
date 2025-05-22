@@ -580,6 +580,7 @@ function handleTouch(e) {
 
 
 function restartGame() {
+    document.getElementById("game-over-ui").style.display = "none";
     if (pipeInterval) {
         clearInterval(pipeInterval);
         pipeInterval = null;
@@ -613,47 +614,20 @@ function restartGame() {
 
 function endGame() {
     gameOver = true;
-    // highScore = Math.max(highScore, Math.floor(score));
-
+    
     if (score > highScore) {
         highScore = score;
         localStorage.setItem("supermanHighScore", highScore);
     }
 
-
-    // Hide the pause button after the game ends
-    pauseBtn.style.display = "none";  // Hide the pause button
-
-    // Keep board visible for background
-    board.style.display = "block";  // Changed from "none"
-    homepage.style.display = "none";
+    // Hide game elements
+    pauseBtn.style.display = "none";
     
-    // Show UI canvas and game over elements
-    ui.style.display = "block";
-    restartBtn.style.display = "block";
+    // Show game over UI
+    document.getElementById("game-over-ui").style.display = "flex";
+    document.querySelector(".current-score").textContent = Math.floor(score);
+    document.querySelector(".high-score span").textContent = highScore;
     
-    // Clear and redraw UI
-    uiContext.clearRect(0, 0, board.width, board.height);
-    
-    // Draw semi-transparent overlay
-    uiContext.fillStyle = "rgba(0, 0, 0, 0.5)";  // Reduced opacity to 50%
-    uiContext.fillRect(0, 0, boardWidth, boardHeight);
-    
-    const centerX = boardWidth / 2;
-    
-    // Game Over Image
-    uiContext.drawImage(gameOverImg, centerX - 225, 95, 450, 200);
-    
-    // Scores
-    uiContext.fillStyle = "#FFD700";
-    uiContext.font = "bold 45px 'Arial Black'";
-    uiContext.textAlign = "center";
-    uiContext.fillText(Math.floor(score), centerX, 100);
-    
-    // High Score
-    uiContext.drawImage(highScoreImg, centerX - 110, 280, 150, 80);
-    uiContext.fillText(highScore, centerX + 75, 330);
-
     // Sound controls
     soundBtnGameover.style.display = soundEnabled ? "block" : "none";
     muteBtnGameover.style.display = soundEnabled ? "none" : "block";
@@ -666,7 +640,6 @@ function endGame() {
         hitSound.currentTime = 0;
         hitSound.play();
     }
-    document.getElementById("powerup-count").style.display = "none";
 }
 
 // New helper functions
