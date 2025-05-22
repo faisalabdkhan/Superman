@@ -34,7 +34,7 @@ body {
 @media (min-aspect-ratio: 9/16) {
     .game-container {
         width: calc(100vh * (9/16));
-        height: 100vh;
+        height: auto;
     }
 }
 
@@ -48,7 +48,7 @@ body {
 @media screen and (orientation: landscape) and (max-width: 1000px) {
     .game-container {
         width: calc(100vh * (9/16));
-        height: 100vh;
+        height: auto;
     }
 }
 
