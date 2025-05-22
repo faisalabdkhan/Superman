@@ -521,6 +521,24 @@ function updateDifficulty() {
 }
 
 function placePipes() {
+    let gapY = Math.floor(Math.random() * (boardHeight - basePipeGap));
+    let topPipe = {
+        x: boardWidth, // <-- Make sure this is boardWidth
+        y: gapY - pipeHeight,
+        width: pipeWidth,
+        height: pipeHeight,
+        img: topPipeImg,
+        passed: false
+    };
+    let bottomPipe = {
+        x: boardWidth,
+        y: gapY + basePipeGap,
+        width: pipeWidth,
+        height: pipeHeight,
+        img: bottomPipeImg,
+        passed: false
+    };
+    pipeArray.push(topPipe, bottomPipe);
     if (gameOver || !gameStarted) return;
     const currentGap = basePipeGap;
     let minPipeY = -pipeHeight + 50; // Original minimum Y position
@@ -528,8 +546,8 @@ function placePipes() {
     let randomPipeY = Math.random() * (maxPipeY - minPipeY) + minPipeY;
 
     let gapTopY = randomPipeY + pipeHeight;
-let gapBottomY = gapTopY + basePipeGap;
-lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
+    let gapBottomY = gapTopY + basePipeGap;
+    lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
 
 
     let obstacleChance = baseObstacleChance + currentLevel * obstacleIncreasePerLevel;
@@ -559,6 +577,7 @@ lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
         height: pipeHeight,
         passed: false,
     });
+    pipeArray.push(topPipe, bottomPipe);
 }
 
 function setDynamicPipeInterval() {
