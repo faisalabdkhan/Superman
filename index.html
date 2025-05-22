@@ -50,6 +50,42 @@
       cursor: pointer;
     }
 
+
+    #game-over-ui {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .game-over-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      z-index: 35;
+      margin-top: 20px;
+    }
+    .game-over-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      z-index: 35;
+      margin-top: 20px;
+    }
+    .sound-controls-gameover {
+      display: flex;
+      gap: 15px;
+      order: 2;
+    }
+    
     #start-btn {
       top: 40vh;
       left: 30vw;
@@ -63,11 +99,11 @@
     }
 
     #restart-btn {
-      bottom: 15vh;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20vw;
-      max-width: 80px;
+      position: relative;
+      bottom: auto;
+      left: auto;
+      transform: none;
+      order: 1;
     }
 
     #restart-btn img {
@@ -81,10 +117,11 @@
     #mute-btn-home,
     #sound-btn-gameover,
     #mute-btn-gameover {
-      top: 2vh;
-      right: 2vw;
-      width: 10vw;
-      max-width: 60px;
+      position: relative;
+      bottom: auto;
+      left: auto;
+      transform: none;
+      width: 40px;
     }
 
     #pause-overlay {
@@ -120,6 +157,26 @@
 <body>
 
   <div class="game-container">
+    <!-- Add this inside your game-container div -->
+    <div id="game-over-ui" style="display: none;">
+      <img src="images/gameover.png" alt="Game Over" class="game-over-title">
+      <div class="score-display">
+        <span class="current-score">0</span>
+        <div class="high-score">
+          <img src="images/highscore.png" alt="High Score">
+          <span>0</span>
+        </div>
+      </div>
+      <div class="game-over-buttons">
+        <button id="restart-btn" class="game-control">
+          <img src="images/retry.png" alt="Retry">
+        </button>
+        <div class="sound-controls-gameover">
+          <img src="images/sound.png" id="sound-btn-gameover" class="game-control" alt="Sound On">
+          <img src="images/mute.png" id="mute-btn-gameover" class="game-control" alt="Mute">
+        </div>
+      </div>
+    </div>
     <img id="homepage" src="images/AMMAN.png" alt="Home">
     <canvas id="board"></canvas>
     <canvas id="ui"></canvas>
