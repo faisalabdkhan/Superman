@@ -150,28 +150,26 @@ function handleResize() {
 
 
 window.onload = function () {
-      // Get viewport dimensions
-    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-      
-      // Calculate scale factor
-    const scale = Math.min(vw / 360, vh / 640);
-      
-      // Set canvas dimensions
-    board.width = 360 * devicePixelRatio;
-    board.height = 640 * devicePixelRatio;
-    board.style.width = '360px';
-    board.style.height = '640px';
-    board.style.transform = `scale(${scale})`;
-    board.style.transformOrigin = 'top left';
-      
-      // Repeat for UI canvas
-    ui.width = 360 * devicePixelRatio;
-    ui.height = 640 * devicePixelRatio;
-    ui.style.width = '360px';
-    ui.style.height = '640px';
-    ui.style.transform = `scale(${scale})`;
-    ui.style.transformOrigin = 'top left';
+    board = document.getElementById("board");
+    board.height = boardHeight;
+    board.width = boardWidth * devicePixelRatio;
+    board.style.width = boardWidth + 'px';
+    board.style.height = boardHeight + 'px';
+    context = board.getContext("2d");
+    context.scale(devicePixelRatio, devicePixelRatio);
+
+    // UI canvas setup
+    let uiCanvas = document.getElementById("ui");
+    uiCanvas.height = boardHeight * devicePixelRatio;
+    uiCanvas.width = boardWidth * devicePixelRatio;
+    uiCanvas.style.width = boardWidth + 'px';
+    uiCanvas.style.height = boardHeight + 'px';
+    uiContext = uiCanvas.getContext("2d");
+    uiContext.scale(devicePixelRatio, devicePixelRatio);
+
+    // ADD THE RESIZE HANDLER HERE
+    window.addEventListener('resize', handleResize);
+    handleResize(); 
 
     // Load images
 
