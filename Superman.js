@@ -117,29 +117,27 @@ window.addEventListener('resize', handleResize);
 handleResize();
 
 function handleResize() {
-    const gameContainer = document.querySelector('.game-container');
-    const aspectRatio = 9/16;
-    
-    if (window.matchMedia("(orientation: portrait)").matches) {
-        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-    } else {
-        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-    }
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-    // Update canvas scale
-    const scale = Math.min(
-        gameContainer.offsetWidth / 360,
-        gameContainer.offsetHeight / 640
-    );
-    
-    [board, ui].forEach(element => {
-        element.style.transform = `scale(${scale})`;
-        element.style.transformOrigin = 'top left';
-    });
-    homepage.style.transform = '';
+    board.width = width * devicePixelRatio;
+    board.height = height * devicePixelRatio;
+    board.style.width = width + 'px';
+    board.style.height = height + 'px';
+    context = board.getContext("2d");
+    context.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+    context.scale(devicePixelRatio, devicePixelRatio);
+
+    // Same for UI canvas
+    ui.width = width * devicePixelRatio;
+    ui.height = height * devicePixelRatio;
+    ui.style.width = width + 'px';
+    ui.style.height = height + 'px';
+    uiContext = ui.getContext("2d");
+    uiContext.setTransform(1, 0, 0, 1, 0, 0);
+    uiContext.scale(devicePixelRatio, devicePixelRatio);
 }
+
 
 
 window.onload = function () {
@@ -169,6 +167,8 @@ window.onload = function () {
     uiCanvas.style.height = boardHeight + 'px';
     uiContext = uiCanvas.getContext("2d");
     uiContext.scale(devicePixelRatio, devicePixelRatio);
+
+    handleResize();
 
     // Load images
 
@@ -220,6 +220,8 @@ window.onload = function () {
     soundBtnPause.addEventListener("click", toggleSound);
     muteBtnPause.addEventListener("click", toggleSound);
     document.addEventListener("touchstart", handleTouch);
+    window.addEventListener('resize', handleResize);
+
 
 
 
