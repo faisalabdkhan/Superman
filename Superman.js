@@ -117,13 +117,6 @@ window.addEventListener('resize', handleResize);
 handleResize();
 
 function handleResize() {
-    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-    const scale = Math.min(vw / 360, vh / 640);
-      
-    board.style.transform = `scale(${scale})`;
-    ui.style.transform = `scale(${scale})`;
-    }
     const gameContainer = document.querySelector('.game-container');
     const aspectRatio = 9/16;
     
@@ -150,6 +143,16 @@ function handleResize() {
 
 
 window.onload = function () {
+    const container = document.querySelector('.game-container');
+    const actualWidth = container.clientWidth;
+    const actualHeight = container.clientHeight;
+    
+    scaleFactor = Math.min(
+        window.innerWidth / 360,
+        window.innerHeight / 640
+    );
+    
+    // Set up canvases
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth * devicePixelRatio;
@@ -158,7 +161,7 @@ window.onload = function () {
     context = board.getContext("2d");
     context.scale(devicePixelRatio, devicePixelRatio);
 
-    // UI canvas setup
+    // Repeat same scaling for UI canvas
     let uiCanvas = document.getElementById("ui");
     uiCanvas.height = boardHeight * devicePixelRatio;
     uiCanvas.width = boardWidth * devicePixelRatio;
@@ -166,10 +169,6 @@ window.onload = function () {
     uiCanvas.style.height = boardHeight + 'px';
     uiContext = uiCanvas.getContext("2d");
     uiContext.scale(devicePixelRatio, devicePixelRatio);
-
-    // ADD THE RESIZE HANDLER HERE
-    window.addEventListener('resize', handleResize);
-    handleResize(); 
 
     // Load images
 
