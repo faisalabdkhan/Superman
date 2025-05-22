@@ -521,23 +521,7 @@ function updateDifficulty() {
 }
 
 function placePipes() {
-    let gapY = Math.floor(Math.random() * (boardHeight - basePipeGap));
-    let topPipe = {
-        x: boardWidth, // <-- Make sure this is boardWidth
-        y: gapY - pipeHeight,
-        width: pipeWidth,
-        height: pipeHeight,
-        img: topPipeImg,
-        passed: false
-    };
-    let bottomPipe = {
-        x: boardWidth,
-        y: gapY + basePipeGap,
-        width: pipeWidth,
-        height: pipeHeight,
-        img: bottomPipeImg,
-        passed: false
-    };
+
     pipeArray.push(topPipe, bottomPipe);
     if (gameOver || !gameStarted) return;
     const currentGap = basePipeGap;
@@ -577,7 +561,7 @@ function placePipes() {
         height: pipeHeight,
         passed: false,
     });
-    pipeArray.push(topPipe, bottomPipe);
+
 }
 
 function setDynamicPipeInterval() {
