@@ -144,9 +144,7 @@ function handleResize() {
 
 window.onload = function () {
 
-    const container = document.querySelector('.game-container');
-    const actualWidth = container.clientWidth;
-    const actualHeight = container.clientHeight;
+
     
     scaleFactor = Math.min(
         window.innerWidth / 360,
@@ -155,21 +153,26 @@ window.onload = function () {
     
     // Set up canvases
     board = document.getElementById("board");
-    board.height = boardHeight;
-    board.width = boardWidth * devicePixelRatio;
-    board.style.width = boardWidth + 'px';
-    board.style.height = boardHeight + 'px';
+    board = document.getElementById("board");
+    ui = document.getElementById("ui");
+
+    const container = document.querySelector('.game-container');
+    const actualWidth = container.clientWidth;
+    const actualHeight = container.clientHeight;
+
+    // Get contexts
     context = board.getContext("2d");
-    context.scale(devicePixelRatio, devicePixelRatio);
+    uiContext = ui.getContext("2d");
+
+    // Scale the drawing context to match our game dimensions
+    const scaleX = containerWidth / boardWidth;
+    const scaleY = containerHeight / boardHeight;
+    context.scale(scaleX, scaleY);
+    uiContext.scale(scaleX, scaleY);
 
     // Repeat same scaling for UI canvas
     let uiCanvas = document.getElementById("ui");
-    uiCanvas.height = boardHeight * devicePixelRatio;
-    uiCanvas.width = boardWidth * devicePixelRatio;
-    uiCanvas.style.width = boardWidth + 'px';
-    uiCanvas.style.height = boardHeight + 'px';
-    uiContext = uiCanvas.getContext("2d");
-    uiContext.scale(devicePixelRatio, devicePixelRatio);
+
 
     // Load images
 
