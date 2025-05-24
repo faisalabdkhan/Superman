@@ -143,90 +143,55 @@ function handleResize() {
 
 
 window.onload = function () {
-
-
-    
-    scaleFactor = Math.min(
-        window.innerWidth / 360,
-        window.innerHeight / 640
-    );
-    
     // Set up canvases
     board = document.getElementById("board");
-    board = document.getElementById("board");
     ui = document.getElementById("ui");
-
-    const container = document.querySelector('.game-container');
-    const actualWidth = container.clientWidth;
-    const actualHeight = container.clientHeight;
-
+    
+    // Set canvas dimensions
+    board.width = boardWidth;
+    board.height = boardHeight;
+    ui.width = boardWidth;
+    ui.height = boardHeight;
+    
     // Get contexts
     context = board.getContext("2d");
     uiContext = ui.getContext("2d");
-
-    // Scale the drawing context to match our game dimensions
-    const scaleX = containerWidth / boardWidth;
-    const scaleY = containerHeight / boardHeight;
-    context.scale(scaleX, scaleY);
-    uiContext.scale(scaleX, scaleY);
-
-    // Repeat same scaling for UI canvas
-    let uiCanvas = document.getElementById("ui");
-
-
+    
     // Load images
-
-
     powerUpImg.src = "./images/powerups.png";
     enemyImg.src = "./images/enemy.png";
-
-    SupermanImg = new Image();
     SupermanImg.src = "./images/superman1.png";
-
-    topPipeImg = new Image();
     topPipeImg.src = "./images/toppipe.png";
-
-    bottomPipeImg = new Image();
     bottomPipeImg.src = "./images/bottompipe.png";
-
-    newTopPipeImg = new Image();
     newTopPipeImg.src = "./images/pipe11.png";
-
-    newBottomPipeImg = new Image();
     newBottomPipeImg.src = "./images/pipe1.png";
-
-    gameOverImg = new Image();
     gameOverImg.src = "./images/gameover.png";
-
-    highScoreImg = new Image();
     highScoreImg.src = "./images/highscore.png";
-
-    collisionImg = new Image();
     collisionImg.src = "./images/collision.png";
 
     // Initialize sound
     bgMusic.loop = true;
     updateSoundDisplay();
 
-    handleResize();
-
-    // Event listeners
-    startBtn.addEventListener("click", startGame);
-    restartBtn.addEventListener("click", restartGame);
+    // Set up event listeners - IMPORTANT: Use the same button references
+    document.getElementById("start-btn").addEventListener("click", startGame);
+    document.getElementById("restart-btn").addEventListener("click", restartGame);
+    document.getElementById("sound-btn-home").addEventListener("click", toggleSound);
+    document.getElementById("mute-btn-home").addEventListener("click", toggleSound);
+    document.getElementById("pause-btn").addEventListener("click", pauseGame);
+    document.getElementById("play-btn").addEventListener("click", resumeGame);
+    document.getElementById("sound-btn-gameover").addEventListener("click", toggleSound);
+    document.getElementById("mute-btn-gameover").addEventListener("click", toggleSound);
+    document.getElementById("resume-btn").addEventListener("click", resumeGame);
+    document.getElementById("sound-btn-pause").addEventListener("click", toggleSound);
+    document.getElementById("mute-btn-pause").addEventListener("click", toggleSound);
+    
+    // Other event listeners
     document.addEventListener("keydown", handleKeyPress);
-    pauseBtn.addEventListener("click", pauseGame);
-    playBtn.addEventListener("click", resumeGame);
-    soundBtnHome.addEventListener("click", toggleSound);
-    muteBtnHome.addEventListener("click", toggleSound);
-    soundBtnGameover.addEventListener("click", toggleSound);
-    muteBtnGameover.addEventListener("click", toggleSound);
-    resumeBtn.addEventListener("click", resumeGame);
-    soundBtnPause.addEventListener("click", toggleSound);
-    muteBtnPause.addEventListener("click", toggleSound);
     document.addEventListener("touchstart", handleTouch);
 
-
-
+    // Initial setup
+    handleResize();
     showHomepage();
 };
 
@@ -798,14 +763,18 @@ function showHomepage() {
     homepage.style.display = "block";
     board.style.display = "none";
     ui.style.display = "none";
-    startBtn.style.display = "block";
-    restartBtn.style.display = "none";
-    pauseBtn.style.display = "none";
-    playBtn.style.display = "none";
-    soundBtnHome.style.display = soundEnabled ? "block" : "none";
-    muteBtnHome.style.display = soundEnabled ? "none" : "block";
-    soundBtnGameover.style.display = "none";
-    muteBtnGameover.style.display = "none";
+    
+    // Show/hide buttons
+    document.getElementById("start-btn").style.display = "block";
+    document.getElementById("restart-btn").style.display = "none";
+    document.getElementById("pause-btn").style.display = "none";
+    document.getElementById("play-btn").style.display = "none";
+    
+    // Sound buttons
+    document.getElementById("sound-btn-home").style.display = soundEnabled ? "block" : "none";
+    document.getElementById("mute-btn-home").style.display = soundEnabled ? "none" : "block";
+    document.getElementById("sound-btn-gameover").style.display = "none";
+    document.getElementById("mute-btn-gameover").style.display = "none";
     
     // Reset game state
     gameOver = false;
@@ -814,5 +783,4 @@ function showHomepage() {
     score = 0;
     Superman.y = SupermanY;
     pauseOverlay.style.display = "none";
-
-}  
+}
