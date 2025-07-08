@@ -1,39 +1,76 @@
-<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Superman Game</title>
     <link rel="icon" type="image/png" href="images/fav6.png">
     <link rel="stylesheet" href="Superman.css">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
-    <div class="game-wrapper">
-        <div class="game-container">
-            <img id="homepage" src="images/AMMAN.png">
-            <canvas id="board"></canvas>
-            <canvas id="ui"></canvas>
-    
-            <!-- Game Controls -->
-            <button id="start-btn" class="game-control">
-                <img src="images/start.png" width="140" height="60">
-            </button>
-            <button id="restart-btn" class="game-control">
-                <img src="images/retry.png" width="80" height="80">
-            </button>
-            
-            <!-- Sound Controls -->
-            <img src="images/sound.png" id="sound-btn-home" class="game-control">
-            <img src="images/mute.png" id="mute-btn-home" class="game-control">
-            <img src="images/pause.png" id="pause-btn" class="game-control">
-            <img src="images/play.png" id="play-btn" class="game-control">
-            
-            <!-- Pause Overlay -->
-            <div id="pause-overlay" class="pause-overlay">
-                <img src="images/play.png" id="resume-btn" class="game-control">
-                <img src="images/sound.png" id="sound-btn-pause" class="game-control">
-                <img src="images/mute.png" id="mute-btn-pause" class="game-control">
+    <div class="safe-area">
+        <div class="game-wrapper">
+            <div class="game-container">
+                <!-- Homepage Image -->
+                <div class="homepage-container">
+                    <img id="homepage" src="images/AMMAN.png" alt="Superman Game Homepage">
+                </div>
+                
+                <!-- Game Canvases -->
+                <canvas id="board"></canvas>
+                <canvas id="ui"></canvas>
+        
+                <!-- Game Controls -->
+                <button id="start-btn" class="game-control touch-target" type="button" aria-label="Start Game">
+                    <img src="images/start.png" alt="Start Game" width="140" height="60">
+                </button>
+                
+                <button id="restart-btn" class="game-control touch-target" type="button" aria-label="Restart Game">
+                    <img src="images/retry.png" alt="Restart Game" width="80" height="80">
+                </button>
+                
+                <!-- Sound Controls -->
+                <button id="sound-btn-home" class="game-control touch-target" type="button" aria-label="Enable Sound">
+                    <img src="images/sound.png" alt="Sound On" width="40" height="40">
+                </button>
+                
+                <button id="mute-btn-home" class="game-control touch-target" type="button" aria-label="Mute Sound">
+                    <img src="images/mute.png" alt="Sound Off" width="40" height="40">
+                </button>
+                
+                <button id="pause-btn" class="game-control touch-target" type="button" aria-label="Pause Game">
+                    <img src="images/pause.png" alt="Pause" width="40" height="40">
+                </button>
+                
+                <button id="play-btn" class="game-control touch-target" type="button" aria-label="Resume Game">
+                    <img src="images/play.png" alt="Play" width="40" height="40">
+                </button>
+                
+                <!-- Game Over Sound Controls -->
+                <button id="sound-btn-gameover" class="game-control touch-target" type="button" aria-label="Enable Sound">
+                    <img src="images/sound.png" alt="Sound On" width="40" height="40">
+                </button>
+                
+                <button id="mute-btn-gameover" class="game-control touch-target" type="button" aria-label="Mute Sound">
+                    <img src="images/mute.png" alt="Sound Off" width="40" height="40">
+                </button>
+                
+                <!-- Pause Overlay -->
+                <div id="pause-overlay" class="pause-overlay">
+                    <button id="resume-btn" class="game-control touch-target" type="button" aria-label="Resume Game">
+                        <img src="images/play.png" alt="Resume" width="80" height="80">
+                    </button>
+                    <button id="sound-btn-pause" class="game-control touch-target" type="button" aria-label="Enable Sound">
+                        <img src="images/sound.png" alt="Sound On" width="80" height="80">
+                    </button>
+                    <button id="mute-btn-pause" class="game-control touch-target" type="button" aria-label="Mute Sound">
+                        <img src="images/mute.png" alt="Sound Off" width="80" height="80">
+                    </button>
+                </div>
             </div>
         </div>
     </div>
