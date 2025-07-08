@@ -76,14 +76,14 @@ let baseObstacleChance = 0.1;
 let obstacleIncreasePerLevel = 0.05;
 
 // Images
-let topPipeImg;
-let bottomPipeImg;
-let newTopPipeImg;
-let newBottomPipeImg;
-let gameOverImg;
-let yourScoreImg;
-let highScoreImg;
-let collisionImg;
+let topPipeImg = new Image();
+let bottomPipeImg = new Image();
+let newTopPipeImg = new Image();
+let newBottomPipeImg = new Image();
+let gameOverImg = new Image();
+let yourScoreImg = new Image();
+let highScoreImg = new Image();
+let collisionImg = new Image();
 
 // Game variables
 let velocityX = baseVelocityX;
@@ -190,6 +190,7 @@ function setupButtonEvents() {
             e.preventDefault();
         });
     }
+    
     addUniversalEventListener(startBtn, function(e) {
         e.preventDefault(); e.stopPropagation(); startGame();
     });
@@ -225,7 +226,6 @@ function setupButtonEvents() {
     });
 }
 
-
 // Fixed touch handling for game area (not buttons)
 function setupGameTouchEvents() {
     const gameContainer = document.querySelector('.game-container');
@@ -238,25 +238,6 @@ function setupGameTouchEvents() {
         if (e.target.closest('.game-control')) return;
         handleGameTouch(e);
     });
-}
-function handleGameTouch(e) {
-    if (isCountdownActive) return;
-    if (!gameStarted && !gameOver) {
-        startGame();
-    } else if (gameOver) {
-        restartGame();
-    } else if (gameStarted && !gameOver && !isPaused) {
-        jump();
-    } else if (isPaused) {
-        resumeGame();
-    }
-}
-function jump() {
-    velocityY = -6;
-    if (soundEnabled) {
-        flySound.currentTime = 0;
-        flySound.play().catch(() => {});
-    }
 }
 
 function handleGameTouch(e) {
@@ -293,12 +274,13 @@ function jump() {
 // Initialize game
 window.addEventListener('load', function () {
     setupCanvas();
-    setupButtonEvents(); // Setup button events first
-    setupGameTouchEvents(); // Then setup game area touch events
+    setupButtonEvents();
+    setupGameTouchEvents();
     
     // Load images
     powerUpImg.src = "./images/powerups.png";
     enemyImg.src = "./images/enemy.png";
+    SupermanImg = new Image();
     SupermanImg.src = "./images/superman1.png";
     topPipeImg.src = "./images/toppipe.png";
     bottomPipeImg.src = "./images/bottompipe.png";
@@ -325,7 +307,6 @@ window.addEventListener('load', function () {
     showHomepage();
 });
 
-// Rest of the game functions with minor fixes
 function toggleSound() {
     soundEnabled = !soundEnabled;
     
@@ -353,6 +334,8 @@ function updateSoundDisplay() {
     muteBtnHome.style.display = showSound ? "none" : "block";
     soundBtnGameover.style.display = showSound ? "block" : "none";
     muteBtnGameover.style.display = showSound ? "none" : "block";
+    soundBtnPause.style.display = showSound ? "block" : "none";
+    muteBtnPause.style.display = showSound ? "none" : "block";
 }
 
 function pauseGame() {
@@ -361,27 +344,28 @@ function pauseGame() {
     isPaused = true;
     pauseOverlay.style.display = "flex";
     pauseBtn.style.display = "none";
-    playBtn.style.display = "block";
-    soundBtnPause.style.display = "flex";
+    playBtn.style.display = "none"; // Hide play button (since we're showing pause overlay)
     bgMusic.pause();
     cancelAnimationFrame(animationFrameId);
     clearInterval(pipeInterval);
 }
 
 function resumeGame() {
+    if (!gameStarted || gameOver) return;
+
     isPaused = false;
     pauseOverlay.style.display = "none";
     pauseBtn.style.display = "block";
     playBtn.style.display = "none";
     if (soundEnabled) bgMusic.play().catch(() => {});
     pipeInterval = setDynamicPipeInterval();
-    cancelAnimationFrame(animationFrameId);
     requestAnimationFrame(update);
 }
 
 function startGame() {
     gameOver = false;
     gameStarted = true;
+    isPaused = false;
     score = 0;
     currentLevel = 0;
     lastLevelCheckpoint = 0;
@@ -389,6 +373,8 @@ function startGame() {
     velocityY = 0;
     Superman.y = SupermanY;
     pipeArray = [];
+    powerUpArray = [];
+    enemyArray = [];
     isLevelAnimating = false;
     
     document.querySelector('.homepage-container').style.display = "none";
@@ -396,9 +382,11 @@ function startGame() {
     ui.style.display = "block";
     startBtn.style.display = "none";
     restartBtn.style.display = "none";
-    pauseBtn.style.display = "none";
+    pauseBtn.style.display = "block"; // Show pause button
+    playBtn.style.display = "none";   // Hide play button
     soundBtnHome.style.display = "none";
     muteBtnHome.style.display = "none";
+    pauseOverlay.style.display = "none";
 
     isCountdownActive = true;
     countdown = 3;
@@ -674,6 +662,7 @@ function restartGame() {
 
     gameOver = false;
     gameStarted = false;
+    isPaused = false;
     score = 0;
     currentLevel = 0;
     lastLevelCheckpoint = 0;
@@ -702,6 +691,7 @@ function endGame() {
     }
 
     pauseBtn.style.display = "none";
+    playBtn.style.display = "none";
     board.style.display = "block";
     document.querySelector('.homepage-container').style.display = "none";
     
@@ -805,6 +795,7 @@ function showHomepage() {
     restartBtn.style.display = "none";
     pauseBtn.style.display = "none";
     playBtn.style.display = "none";
+    pauseOverlay.style.display = "none";
     
     soundBtnHome.style.display = soundEnabled ? "block" : "none";
     muteBtnHome.style.display = soundEnabled ? "none" : "block";
@@ -813,8 +804,8 @@ function showHomepage() {
     
     gameOver = false;
     gameStarted = false;
+    isPaused = false;
     pipeArray = [];
     score = 0;
     Superman.y = SupermanY;
-    pauseOverlay.style.display = "none";
 }
