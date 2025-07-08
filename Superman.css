@@ -95,7 +95,10 @@ body {
 
 #board {
   z-index: 2;
-  background: linear-gradient(180deg, #87ceeb 0%, #98fb98 100%);
+  background-image: url("images/backgrond.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 #ui {

@@ -100,6 +100,24 @@ const levelAnimationDuration = 1000
 let soundEnabled = true
 let isPaused = false
 
+// Images - restore proper image loading
+const SupermanImg = new Image()
+const powerUpImg = new Image()
+const enemyImg = new Image()
+const topPipeImg = new Image()
+const bottomPipeImg = new Image()
+const newTopPipeImg = new Image()
+const newBottomPipeImg = new Image()
+const gameOverImg = new Image()
+const yourScoreImg = new Image()
+const highScoreImg = new Image()
+const collisionImg = new Image()
+
+// Sound elements
+const bgMusic = new Audio("./sounds/bg.mp3")
+const flySound = new Audio("./sounds/fly.mp3")
+const hitSound = new Audio("./sounds/hit.mp3")
+
 // UI elements
 const pauseBtn = document.getElementById("pause-btn")
 const playBtn = document.getElementById("play-btn")
@@ -271,8 +289,10 @@ function handleGameTouch(e) {
 
 function jump() {
   velocityY = -6
-  // Play jump sound if available
-  console.log("Jump!")
+  if (soundEnabled) {
+    flySound.currentTime = 0
+    flySound.play().catch(() => {})
+  }
 }
 
 // Initialize game
@@ -280,6 +300,22 @@ window.addEventListener("load", () => {
   setupCanvas()
   setupButtonEvents()
   setupGameTouchEvents()
+
+  // Load all game images
+  SupermanImg.src = "./images/superman1.png"
+  powerUpImg.src = "./images/powerups.png"
+  enemyImg.src = "./images/enemy.png"
+  topPipeImg.src = "./images/toppipe.png"
+  bottomPipeImg.src = "./images/bottompipe.png"
+  newTopPipeImg.src = "./images/pipe11.png"
+  newBottomPipeImg.src = "./images/pipe1.png"
+  gameOverImg.src = "./images/gameover.png"
+  yourScoreImg.src = "./images/yourscore.png"
+  highScoreImg.src = "./images/highscore.png"
+  collisionImg.src = "./images/collision.png"
+
+  // Initialize sound
+  bgMusic.loop = true
 
   // Initialize sound display
   updateSoundDisplay()
@@ -297,7 +333,12 @@ window.addEventListener("load", () => {
 function toggleSound() {
   soundEnabled = !soundEnabled
   updateSoundDisplay()
-  console.log("Sound toggled:", soundEnabled)
+
+  if (soundEnabled && gameStarted && !gameOver && !isPaused) {
+    bgMusic.play().catch(() => {})
+  } else {
+    bgMusic.pause()
+  }
 }
 
 function updateSoundDisplay() {
@@ -390,9 +431,8 @@ function animateCountdown() {
   context.clearRect(0, 0, boardWidth, boardHeight)
   uiContext.clearRect(0, 0, boardWidth, boardHeight)
 
-  // Draw Superman
-  context.fillStyle = "#4169E1"
-  context.fillRect(Superman.x, Superman.y, Superman.width, Superman.height)
+  // Draw Superman with actual image instead of rectangle
+  context.drawImage(SupermanImg, Superman.x, Superman.y, Superman.width, Superman.height)
 
   // Draw countdown
   const fontSize = 100 + 50 * (countdown - Math.floor(countdown))
@@ -449,9 +489,8 @@ function update() {
   velocityY += gravity
   Superman.y = Math.max(Superman.y + velocityY, 0)
 
-  // Draw Superman (simple rectangle for now)
-  context.fillStyle = shieldActive ? "#FFD700" : "#4169E1"
-  context.fillRect(Superman.x, Superman.y, Superman.width, Superman.height)
+  // Draw Superman with actual image
+  context.drawImage(SupermanImg, Superman.x, Superman.y, Superman.width, Superman.height)
 
   // Check if Superman hits ground
   if (Superman.y > boardHeight) {
@@ -464,9 +503,15 @@ function update() {
     const pipe = pipeArray[i]
     pipe.x += velocityX
 
-    // Draw pipe (simple rectangles)
-    context.fillStyle = pipe.isObstacle ? "#8B0000" : "#228B22"
-    context.fillRect(pipe.x, pipe.y, pipe.width, pipe.height)
+    // Draw pipe with actual images
+    const pipeImg = pipe.isObstacle
+      ? pipe.y < 0
+        ? newTopPipeImg
+        : newBottomPipeImg
+      : pipe.y < 0
+        ? topPipeImg
+        : bottomPipeImg
+    context.drawImage(pipeImg, pipe.x, pipe.y, pipe.width, pipe.height)
 
     if (!pipe.passed && Superman.x > pipe.x + pipe.width) {
       score += 0.5
@@ -531,9 +576,8 @@ function handlePowerUps() {
     const p = powerUpArray[i]
     p.x += velocityX
 
-    // Draw power-up
-    context.fillStyle = "#FFD700"
-    context.fillRect(p.x, p.y, p.width, p.height)
+    // Draw power-up with actual image
+    context.drawImage(powerUpImg, p.x, p.y, p.width, p.height)
 
     if (detectCollision(Superman, p)) {
       shieldActive = true
@@ -556,9 +600,8 @@ function handleEnemies() {
     const e = enemyArray[i]
     e.x += e.speed
 
-    // Draw enemy
-    context.fillStyle = "#8B0000"
-    context.fillRect(e.x, e.y, e.width, e.height)
+    // Draw enemy with actual image
+    context.drawImage(enemyImg, e.x, e.y, e.width, e.height)
 
     if (!shieldActive && detectCollision(Superman, e)) {
       endGame()
@@ -703,19 +746,19 @@ function endGame() {
 
   const centerX = boardWidth / 2
 
-  // Game Over text
-  uiContext.fillStyle = "#FF0000"
-  uiContext.font = "bold 48px Arial"
-  uiContext.textAlign = "center"
-  uiContext.fillText("GAME OVER", centerX, 200)
+  // Draw game over image
+  context.drawImage(gameOverImg, centerX - 225, 95, 450, 200)
+
+  // Draw high score image
+  context.drawImage(highScoreImg, centerX - 110, 280, 150, 80)
 
   // Final score
-  uiContext.fillStyle = "#FFD700"
-  uiContext.font = "bold 36px Arial"
-  uiContext.fillText(`Score: ${Math.floor(score)}`, centerX, 280)
+  // uiContext.fillStyle = "#FFD700";
+  // uiContext.font = "bold 36px Arial";
+  // uiContext.fillText(`Score: ${Math.floor(score)}`, centerX, 280);
 
-  // High score
-  uiContext.fillText(`High Score: ${highScore}`, centerX, 330)
+  // // High score
+  // uiContext.fillText(`High Score: ${highScore}`, centerX, 330);
 
   // Show sound controls
   soundBtnGameover.style.display = soundEnabled ? "block" : "none"
@@ -794,4 +837,13 @@ function showHomepage() {
   Superman.y = SupermanY
 
   console.log("Showing homepage")
+}
+
+function drawCollisionEffect(x, y, width, height) {
+  const scale = 1
+  const collisionW = width * scale
+  const collisionH = height * scale
+  const collisionX = x + (width - collisionW) / 2
+  const collisionY = y + (height - collisionH) / 2
+  context.drawImage(collisionImg, collisionX, collisionY, collisionW, collisionH)
 }
