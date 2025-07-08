@@ -107,9 +107,9 @@ let levelAnimationStartTime = 0;
 const levelAnimationDuration = 1000;
 
 // Sound elements
-let bgMusic = new Audio('./sound/bg.mp3');
-let flySound = new Audio('./sound/fly.mp3');
-let hitSound = new Audio('./sound/hit.mp3');
+let bgMusic = new Audio('./sounds/bg.mp3');
+let flySound = new Audio('./sounds/fly.mp3');
+let hitSound = new Audio('./sounds/hit.mp3');
 let soundEnabled = true;
 let isPaused = false;
 
