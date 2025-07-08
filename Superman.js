@@ -176,122 +176,87 @@ function handleResize() {
 
 // Fixed button event handling
 function setupButtonEvents() {
-    // Helper function to handle both click and touch events
     function addUniversalEventListener(element, handler) {
         if (!element) return;
-        
-        // Remove existing listeners to prevent duplicates
         element.removeEventListener('click', handler);
         element.removeEventListener('touchend', handler);
-        
-        // Add click listener for desktop
         element.addEventListener('click', handler, { passive: false });
-        
-        // Add touch listener for mobile
         element.addEventListener('touchend', function(e) {
             e.preventDefault();
             e.stopPropagation();
             handler(e);
         }, { passive: false });
-        
-        // Prevent context menu on long press
         element.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
     }
-
-    // Setup all button events
     addUniversalEventListener(startBtn, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        startGame();
+        e.preventDefault(); e.stopPropagation(); startGame();
     });
-
     addUniversalEventListener(restartBtn, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        restartGame();
+        e.preventDefault(); e.stopPropagation(); restartGame();
     });
-
     addUniversalEventListener(soundBtnHome, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSound();
+        e.preventDefault(); e.stopPropagation(); toggleSound();
     });
-
     addUniversalEventListener(muteBtnHome, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSound();
+        e.preventDefault(); e.stopPropagation(); toggleSound();
     });
-
     addUniversalEventListener(pauseBtn, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        pauseGame();
+        e.preventDefault(); e.stopPropagation(); pauseGame();
     });
-
     addUniversalEventListener(playBtn, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        resumeGame();
+        e.preventDefault(); e.stopPropagation(); resumeGame();
     });
-
     addUniversalEventListener(soundBtnGameover, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSound();
+        e.preventDefault(); e.stopPropagation(); toggleSound();
     });
-
     addUniversalEventListener(muteBtnGameover, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSound();
+        e.preventDefault(); e.stopPropagation(); toggleSound();
     });
-
     addUniversalEventListener(resumeBtn, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        resumeGame();
+        e.preventDefault(); e.stopPropagation(); resumeGame();
     });
-
     addUniversalEventListener(soundBtnPause, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSound();
+        e.preventDefault(); e.stopPropagation(); toggleSound();
     });
-
     addUniversalEventListener(muteBtnPause, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleSound();
+        e.preventDefault(); e.stopPropagation(); toggleSound();
     });
 }
+
 
 // Fixed touch handling for game area (not buttons)
 function setupGameTouchEvents() {
     const gameContainer = document.querySelector('.game-container');
-    
-    // Touch start handler
     gameContainer.addEventListener('touchstart', function(e) {
-        // Only handle if touch is NOT on a button
-        if (e.target.closest('.game-control')) {
-            return; // Let button handle it
-        }
-        
+        if (e.target.closest('.game-control')) return;
         e.preventDefault();
         handleGameTouch(e);
     }, { passive: false });
-
-    // Mouse click handler for desktop
     gameContainer.addEventListener('click', function(e) {
-        // Only handle if click is NOT on a button
-        if (e.target.closest('.game-control')) {
-            return; // Let button handle it
-        }
-        
+        if (e.target.closest('.game-control')) return;
         handleGameTouch(e);
     });
+}
+function handleGameTouch(e) {
+    if (isCountdownActive) return;
+    if (!gameStarted && !gameOver) {
+        startGame();
+    } else if (gameOver) {
+        restartGame();
+    } else if (gameStarted && !gameOver && !isPaused) {
+        jump();
+    } else if (isPaused) {
+        resumeGame();
+    }
+}
+function jump() {
+    velocityY = -6;
+    if (soundEnabled) {
+        flySound.currentTime = 0;
+        flySound.play().catch(() => {});
+    }
 }
 
 function handleGameTouch(e) {
