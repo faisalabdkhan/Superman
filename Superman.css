@@ -22,45 +22,38 @@ html, body {
 
 /* Safe Area for devices with notches */
 .safe-area {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     width: 100vw;
     height: 100vh;
-    height: -webkit-fill-available;
-    height: fill-available;
     height: 100dvh;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-    margin: 0;
-    overflow: hidden;
-    background-color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #000;
 }
 
-/* Game Wrapper - Maintains Aspect Ratio */
+/* Game Wrapper - Maintains 9:16 Aspect Ratio */
 .game-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
-    max-width: 100%;
-    max-height: 100%;
+    max-width: min(100vw, 100vh * 9/16);
+    max-height: min(100vh, 100vw * 16/9);
     aspect-ratio: 9/16;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #000;
 }
 
 /* Game Container */
 .game-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
     height: 100%;
+    background-color: #000;
     overflow: hidden;
+    border-radius: min(2vw, 8px);
 }
 
 /* Homepage Container */
@@ -123,12 +116,16 @@ html, body {
     border-radius: max(4px, 0.5vmin);
     outline: none;
     -webkit-tap-highlight-color: transparent;
+
+    /* Enhanced touch support */
     touch-action: manipulation;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+    /* Ensure minimum touch target size */
     min-width: 44px;
     min-height: 44px;
 }
@@ -143,6 +140,7 @@ html, body {
     height: 100%;
     object-fit: contain;
     pointer-events: none;
+    /* Prevent image selection */
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -171,7 +169,7 @@ html, body {
     display: none;
 }
 
-/* Sound Control Buttons */
+/* Sound Control Buttons - Home Screen */
 #sound-btn-home, 
 #mute-btn-home {
     left: max(10px, 2vmin);
@@ -181,7 +179,7 @@ html, body {
     z-index: 101;
 }
 
-/* Game Control Buttons */
+/* Game Control Buttons - In Game */
 #pause-btn, 
 #play-btn {
     right: max(10px, 2vmin);
@@ -192,7 +190,7 @@ html, body {
     display: none;
 }
 
-/* Game Over Sound Controls */
+/* Sound Control Buttons - Game Over */
 #sound-btn-gameover, 
 #mute-btn-gameover {
     left: 50%;
@@ -232,12 +230,27 @@ html, body {
     border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Responsive Design */
+/* Game Over Elements */
+.game-over-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 150;
+    display: none;
+}
+
+/* Responsive Design for Different Screen Sizes */
 @media (max-width: 480px) {
     #start-btn {
         width: max(120px, 30vw);
         height: max(50px, 12vw);
         top: 58%;
+    }
+    .game-control {
+        min-width: 48px;
+        min-height: 48px;
     }
     .pause-overlay {
         gap: max(15px, 2vmin);
@@ -263,6 +276,10 @@ html, body {
 
 /* Landscape Mode Adjustments */
 @media (orientation: landscape) and (max-height: 500px) {
+    .game-wrapper {
+        max-width: min(100vh * 9/16, 100vw);
+        max-height: 100vh;
+    }
     #start-btn {
         top: 50%;
         width: max(100px, 15vmin);
@@ -288,6 +305,12 @@ html, body {
     outline-offset: 2px;
 }
 
+/* Loading State */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
 /* Animation for button states */
 @keyframes buttonPress {
     0% { transform: scale(1); }
@@ -297,4 +320,11 @@ html, body {
 
 .game-control.pressed {
     animation: buttonPress 0.1s ease;
+}
+
+/* Print Styles */
+@media print {
+    .game-wrapper {
+        display: none;
+    }
 }
