@@ -24,7 +24,7 @@ html, body {
 .safe-area {
     width: 100vw;
     height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    height: 100dvh;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     display: flex;
     justify-content: center;
@@ -103,17 +103,7 @@ html, body {
     z-index: 3;
 }
 
-/* Touch Target Base Class */
-.touch-target {
-    min-width: max(44px, 5vmin);
-    min-height: max(44px, 5vmin);
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-/* Game Control Buttons */
+/* Enhanced button responsiveness */
 .game-control {
     position: absolute;
     cursor: pointer;
@@ -126,12 +116,18 @@ html, body {
     border-radius: max(4px, 0.5vmin);
     outline: none;
     -webkit-tap-highlight-color: transparent;
-}
 
-.game-control:hover,
-.game-control:focus {
-    transform: scale(1.05);
-    filter: brightness(1.1);
+    /* Enhanced touch support */
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* Ensure minimum touch target size */
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .game-control:active {
@@ -144,9 +140,14 @@ html, body {
     height: 100%;
     object-fit: contain;
     pointer-events: none;
+    /* Prevent image selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-/* Start Button */
+/* Improved start button positioning */
 #start-btn {
     left: 50%;
     top: 60%;
@@ -154,6 +155,8 @@ html, body {
     width: max(140px, 20vmin);
     height: max(60px, 8vmin);
     z-index: 101;
+    min-width: 120px;
+    min-height: 50px;
 }
 
 /* Restart Button */
@@ -238,32 +241,32 @@ html, body {
 }
 
 /* Responsive Design for Different Screen Sizes */
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
     #start-btn {
-        width: max(120px, 25vw);
-        height: max(50px, 10vw);
+        width: max(120px, 30vw);
+        height: max(50px, 12vw);
         top: 58%;
     }
-    
+    .game-control {
+        min-width: 48px;
+        min-height: 48px;
+    }
     .pause-overlay {
         gap: max(15px, 2vmin);
     }
-    
     .pause-overlay .game-control {
         width: max(70px, 10vmin);
         height: max(70px, 10vmin);
     }
 }
 
-@media screen and (max-height: 600px) {
+@media (max-height: 600px) {
     #start-btn {
         top: 55%;
     }
-    
     #restart-btn {
         top: 60%;
     }
-    
     #sound-btn-gameover, 
     #mute-btn-gameover {
         top: 70%;
@@ -271,18 +274,16 @@ html, body {
 }
 
 /* Landscape Mode Adjustments */
-@media screen and (orientation: landscape) and (max-height: 500px) {
+@media (orientation: landscape) and (max-height: 500px) {
     .game-wrapper {
         max-width: min(100vh * 9/16, 100vw);
         max-height: 100vh;
     }
-    
     #start-btn {
         top: 50%;
         width: max(100px, 15vmin);
         height: max(40px, 6vmin);
     }
-    
     .pause-overlay .game-control {
         width: max(60px, 8vmin);
         height: max(60px, 8vmin);
@@ -290,8 +291,7 @@ html, body {
 }
 
 /* High DPI Display Support */
-@media screen and (-webkit-min-device-pixel-ratio: 2),
-       screen and (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     #board, #ui {
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
