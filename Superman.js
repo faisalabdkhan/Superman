@@ -1,18 +1,26 @@
-// Game constants
+// Game constants with responsive scaling
+let baseWidth = 360;
+let baseHeight = 640;
+let boardWidth = baseWidth;
+let boardHeight = baseHeight;
+let scale = 1;
+let dpr = 1;
 
-let boardWidth = 360;
-let boardHeight = 640;
 let context;
 let uiContext;
 let homepage = document.getElementById("homepage");
 let board = document.getElementById("board");
 let ui = document.getElementById("ui");
+
+// Button references
 let startBtn = document.getElementById("start-btn");
 let restartBtn = document.getElementById("restart-btn");
 let soundBtnPause = document.getElementById("sound-btn-pause");
 let muteBtnPause = document.getElementById("mute-btn-pause");
 let pauseOverlay = document.getElementById("pause-overlay");
 let resumeBtn = document.getElementById("resume-btn");
+
+// Game objects and arrays
 let powerUpImg = new Image();
 let enemyImg = new Image();
 let shieldActive = false;
@@ -23,14 +31,16 @@ let lastPowerUpSpawn = 0;
 let powerUpSpawnInterval = 10000; // 10 seconds
 let enemyArray = [];
 let enemySpawnInterval = 4000; // 4 seconds
-let lastEnemySpawn = 0; // Enemy parameters
+let lastEnemySpawn = 0;
+
+// Enemy parameters
 let baseEnemySpeed = -4;
-let enemySpeedIncrease = -0.5; // Speed increase per level
-let maxEnemySpeed = -8;        // Maximum enemy speed
+let enemySpeedIncrease = -0.5;
+let maxEnemySpeed = -8;
+
 // Difficulty caps
 const MAX_DIFFICULTY_LEVEL = 5;
-const PIPE_INTERVAL_REDUCTION_PER_LEVEL = 200; // How much faster pipes spawn per level
-
+const PIPE_INTERVAL_REDUCTION_PER_LEVEL = 200;
 
 // Superman
 let SupermanWidth = 74.8;
@@ -89,8 +99,7 @@ let currentLevel = 0;
 let lastLevelCheckpoint = 0;
 let countdown = 3;
 let isCountdownActive = false;
-let lastPipeGap = { top: 0, bottom: 0 }; // Stores the Y-range of the pipe gap
-
+let lastPipeGap = { top: 0, bottom: 0 };
 
 // Level animation
 let isLevelAnimating = false;
@@ -112,50 +121,174 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
-// Add to window.onload function
-window.addEventListener('resize', handleResize);
-handleResize();
-
-function handleResize() {
-    const gameContainer = document.querySelector('.game-container');
-    const aspectRatio = 9/16;
+// Canvas setup with proper scaling
+function setupCanvas() {
+    // Get device pixel ratio for crisp rendering
+    dpr = window.devicePixelRatio || 1;
     
-    if (window.matchMedia("(orientation: portrait)").matches) {
-        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-    } else {
-        gameContainer.style.width = `${Math.min(window.innerWidth, window.innerHeight * aspectRatio)}px`;
-        gameContainer.style.height = `${Math.min(window.innerHeight, window.innerWidth / aspectRatio)}px`;
-    }
-
-    // Update canvas scale
-    const scale = Math.min(
-        gameContainer.offsetWidth / 360,
-        gameContainer.offsetHeight / 640
+    // Get the actual size of the game container
+    const gameContainer = document.querySelector('.game-container');
+    const containerRect = gameContainer.getBoundingClientRect();
+    
+    // Calculate scale based on container size
+    scale = Math.min(
+        containerRect.width / baseWidth,
+        containerRect.height / baseHeight
     );
     
-    [board, ui].forEach(element => {
-        element.style.transform = `scale(${scale})`;
-        element.style.transformOrigin = 'top left';
-    });
-    homepage.style.transform = '';
-}
-
-
-window.onload = function () {
-    // Set up canvases
-    board = document.getElementById("board");
-    ui = document.getElementById("ui");
+    // Set logical canvas size
+    boardWidth = baseWidth;
+    boardHeight = baseHeight;
     
-    // Set canvas dimensions
-    board.width = boardWidth;
-    board.height = boardHeight;
-    ui.width = boardWidth;
-    ui.height = boardHeight;
+    // Set canvas display size
+    board.style.width = containerRect.width + 'px';
+    board.style.height = containerRect.height + 'px';
+    ui.style.width = containerRect.width + 'px';
+    ui.style.height = containerRect.height + 'px';
     
-    // Get contexts
+    // Set actual canvas size for crisp rendering
+    board.width = baseWidth * dpr;
+    board.height = baseHeight * dpr;
+    ui.width = baseWidth * dpr;
+    ui.height = baseHeight * dpr;
+    
+    // Get contexts and scale them
     context = board.getContext("2d");
     uiContext = ui.getContext("2d");
+    
+    // Scale the drawing context
+    context.scale(dpr, dpr);
+    uiContext.scale(dpr, dpr);
+    
+    // Enable crisp pixel rendering
+    context.imageSmoothingEnabled = false;
+    uiContext.imageSmoothingEnabled = false;
+}
+
+// Enhanced resize handler
+function handleResize() {
+    const gameContainer = document.querySelector('.game-container');
+    
+    // Debounce resize events
+    clearTimeout(window.resizeTimeout);
+    window.resizeTimeout = setTimeout(() => {
+        setupCanvas();
+        
+        // Redraw if game is active
+        if (gameStarted && !gameOver && !isPaused) {
+            requestAnimationFrame(update);
+        } else if (!gameStarted) {
+            showHomepage();
+        }
+    }, 100);
+}
+
+// Enhanced touch handling
+function setupTouchEvents() {
+    const gameContainer = document.querySelector('.game-container');
+    
+    // Prevent default touch behaviors
+    gameContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+    gameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    gameContainer.addEventListener('touchend', handleTouchEnd, { passive: false });
+    gameContainer.addEventListener('touchcancel', handleTouchCancel, { passive: false });
+    
+    // Mouse events for desktop
+    gameContainer.addEventListener('mousedown', handleMouseDown);
+    gameContainer.addEventListener('click', handleClick);
+}
+
+function handleTouchStart(e) {
+    e.preventDefault();
+    
+    if (isCountdownActive) return;
+    
+    // Check if touch is on a button
+    if (e.target.closest('.game-control')) {
+        return; // Let button handle it
+    }
+    
+    // Game touch logic
+    if (!gameStarted && !gameOver) {
+        startGame();
+    } else if (gameOver) {
+        restartGame();
+    } else if (gameStarted && !gameOver && !isPaused) {
+        jump();
+    } else if (isPaused) {
+        resumeGame();
+    }
+}
+
+function handleTouchMove(e) {
+    e.preventDefault(); // Prevent scrolling
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+}
+
+function handleTouchCancel(e) {
+    e.preventDefault();
+}
+
+function handleMouseDown(e) {
+    if (e.target.closest('.game-control')) {
+        return; // Let button handle it
+    }
+    
+    // Same logic as touch for desktop
+    handleTouchStart(e);
+}
+
+function handleClick(e) {
+    if (e.target.closest('.game-control')) {
+        return; // Let button handle it
+    }
+}
+
+function jump() {
+    velocityY = -6;
+    if (soundEnabled) {
+        flySound.currentTime = 0;
+        flySound.play().catch(() => {});
+    }
+}
+
+// Button feedback
+function addButtonFeedback() {
+    const buttons = document.querySelectorAll('.game-control');
+    
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            button.classList.add('pressed');
+        }, { passive: true });
+        
+        button.addEventListener('touchend', () => {
+            button.classList.remove('pressed');
+        }, { passive: true });
+        
+        button.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            button.classList.add('pressed');
+        });
+        
+        button.addEventListener('mouseup', () => {
+            button.classList.remove('pressed');
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.classList.remove('pressed');
+        });
+    });
+}
+
+// Initialize game
+window.addEventListener('load', function () {
+    setupCanvas();
+    setupTouchEvents();
+    addButtonFeedback();
     
     // Load images
     powerUpImg.src = "./images/powerups.png";
@@ -173,30 +306,33 @@ window.onload = function () {
     bgMusic.loop = true;
     updateSoundDisplay();
 
-    // Set up event listeners - IMPORTANT: Use the same button references
-    document.getElementById("start-btn").addEventListener("click", startGame);
-    document.getElementById("restart-btn").addEventListener("click", restartGame);
-    document.getElementById("sound-btn-home").addEventListener("click", toggleSound);
-    document.getElementById("mute-btn-home").addEventListener("click", toggleSound);
-    document.getElementById("pause-btn").addEventListener("click", pauseGame);
-    document.getElementById("play-btn").addEventListener("click", resumeGame);
-    document.getElementById("sound-btn-gameover").addEventListener("click", toggleSound);
-    document.getElementById("mute-btn-gameover").addEventListener("click", toggleSound);
-    document.getElementById("resume-btn").addEventListener("click", resumeGame);
-    document.getElementById("sound-btn-pause").addEventListener("click", toggleSound);
-    document.getElementById("mute-btn-pause").addEventListener("click", toggleSound);
+    // Set up button event listeners
+    startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", restartGame);
+    soundBtnHome.addEventListener("click", toggleSound);
+    muteBtnHome.addEventListener("click", toggleSound);
+    pauseBtn.addEventListener("click", pauseGame);
+    playBtn.addEventListener("click", resumeGame);
+    soundBtnGameover.addEventListener("click", toggleSound);
+    muteBtnGameover.addEventListener("click", toggleSound);
+    resumeBtn.addEventListener("click", resumeGame);
+    soundBtnPause.addEventListener("click", toggleSound);
+    muteBtnPause.addEventListener("click", toggleSound);
     
-    // Other event listeners
+    // Keyboard events
     document.addEventListener("keydown", handleKeyPress);
-    document.addEventListener("touchstart", handleTouch);
+
+    // Resize handler
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(handleResize, 100); // Delay for orientation change
+    });
 
     // Initial setup
-    handleResize();
     showHomepage();
-};
+});
 
-
-
+// Rest of the game functions remain the same, but with enhanced error handling
 function toggleSound() {
     soundEnabled = !soundEnabled;
     
@@ -212,8 +348,11 @@ function toggleSound() {
         muteBtnHome.style.display = soundEnabled ? "none" : "block";
     }
 
-    if (soundEnabled) bgMusic.play();
-    else bgMusic.pause();
+    if (soundEnabled) {
+        bgMusic.play().catch(() => {});
+    } else {
+        bgMusic.pause();
+    }
 }
 
 function updateSoundDisplay() {
@@ -225,7 +364,6 @@ function updateSoundDisplay() {
 }
 
 function pauseGame() {
-
     if (!gameStarted || gameOver) return;
 
     isPaused = true;
@@ -243,12 +381,11 @@ function resumeGame() {
     pauseOverlay.style.display = "none";
     pauseBtn.style.display = "block";
     playBtn.style.display = "none";
-    if (soundEnabled) bgMusic.play();
+    if (soundEnabled) bgMusic.play().catch(() => {});
     pipeInterval = setDynamicPipeInterval();
     cancelAnimationFrame(animationFrameId);
     requestAnimationFrame(update);
 }
-
 
 function startGame() {
     gameOver = false;
@@ -262,16 +399,15 @@ function startGame() {
     pipeArray = [];
     isLevelAnimating = false;
     
-
     // Hide/show elements
-    homepage.style.display = "none";
+    document.querySelector('.homepage-container').style.display = "none";
     board.style.display = "block";
     ui.style.display = "block";
     startBtn.style.display = "none";
     restartBtn.style.display = "none";
     pauseBtn.style.display = "none";
     soundBtnHome.style.display = "none";
-    muteBtnHome.style.display =  "none";
+    muteBtnHome.style.display = "none";
 
     // Start countdown
     isCountdownActive = true;
@@ -283,8 +419,8 @@ function animateCountdown() {
     if (!isCountdownActive) return;
 
     // Clear canvases
-    context.clearRect(0, 0, board.width, board.height);
-    uiContext.clearRect(0, 0, board.width, board.height);
+    context.clearRect(0, 0, boardWidth, boardHeight);
+    uiContext.clearRect(0, 0, boardWidth, boardHeight);
 
     // Draw Superman
     context.drawImage(SupermanImg, Superman.x, Superman.y, Superman.width, Superman.height);
@@ -305,7 +441,7 @@ function animateCountdown() {
         gameStarted = true;
         pauseBtn.style.display = "block";
 
-        if (soundEnabled) bgMusic.play();
+        if (soundEnabled) bgMusic.play().catch(() => {});
         pipeInterval = setDynamicPipeInterval();
         requestAnimationFrame(update);
     } else {
@@ -317,9 +453,8 @@ function update() {
     if (!gameStarted || gameOver || isPaused || isCountdownActive) return;
     animationFrameId = requestAnimationFrame(update);
     
-
-    context.clearRect(0, 0, board.width, board.height);
-    uiContext.clearRect(0, 0, board.width, board.height);
+    context.clearRect(0, 0, boardWidth, boardHeight);
+    uiContext.clearRect(0, 0, boardWidth, boardHeight);
 
     currentLevel = Math.floor(score / 15);
     if (currentLevel > lastLevelCheckpoint && !isLevelAnimating) {
@@ -336,14 +471,14 @@ function update() {
     uiContext.textAlign = "center";
     uiContext.fillText(`HIGH: ${highScore}`, boardWidth / 2 - 140, 30);
     uiContext.textAlign = "center";
-    uiContext.fillText(`LEVEL ${currentLevel}`, boardWidth / 2 , 30);
+    uiContext.fillText(`LEVEL ${currentLevel}`, boardWidth / 2, 30);
 
     // Superman physics
     velocityY += gravity;
     Superman.y = Math.max(Superman.y + velocityY, 0);
     context.drawImage(SupermanImg, Superman.x, Superman.y, Superman.width, Superman.height);
 
-    if (Superman.y > board.height) endGame();
+    if (Superman.y > boardHeight) endGame();
 
     // Pipe handling
     for (let i = 0; i < pipeArray.length; i++) {
@@ -357,12 +492,9 @@ function update() {
         }
 
         if (detectCollision(Superman, pipe)) {
-            // Draw collision image 1x the size of Superman, centered on Superman
             drawCollisionEffect(Superman.x, Superman.y, Superman.width, Superman.height);
-
             endGame(pipe);
         }
-        
     }
 
     while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
@@ -394,45 +526,40 @@ function update() {
         if (progress >= 1) isLevelAnimating = false;
     }
 
-
     // Handle shield
     if (shieldActive && Date.now() > shieldEndTime) {
         shieldActive = false;
     }
 
     // Draw shield if active
-// Handle shield with flashing warning
-if (shieldActive) {
-    const timeLeft = shieldEndTime - Date.now();
-    const isFlashing = timeLeft < 1000 && Math.floor(Date.now() / 100) % 2 === 0;
+    if (shieldActive) {
+        const timeLeft = shieldEndTime - Date.now();
+        const isFlashing = timeLeft < 1000 && Math.floor(Date.now() / 100) % 2 === 0;
 
-    const shieldSize = 50;
+        const shieldSize = 50;
 
-    if (!isFlashing) {
-        context.drawImage(powerUpImg,
-            Superman.x - (shieldSize - Superman.width) / 2,
-            Superman.y - (shieldSize - Superman.height) / 2,
-            shieldSize,
-            shieldSize
-        );
-    } else {
-        // Optional flash effect using lower opacity
-        context.globalAlpha = 0.5;
-        context.drawImage(powerUpImg,
-            Superman.x - (shieldSize - Superman.width) / 2,
-            Superman.y - (shieldSize - Superman.height) / 2,
-            shieldSize,
-            shieldSize
-        );
-        context.globalAlpha = 1.0; // Reset transparency
+        if (!isFlashing) {
+            context.drawImage(powerUpImg,
+                Superman.x - (shieldSize - Superman.width) / 2,
+                Superman.y - (shieldSize - Superman.height) / 2,
+                shieldSize,
+                shieldSize
+            );
+        } else {
+            context.globalAlpha = 0.5;
+            context.drawImage(powerUpImg,
+                Superman.x - (shieldSize - Superman.width) / 2,
+                Superman.y - (shieldSize - Superman.height) / 2,
+                shieldSize,
+                shieldSize
+            );
+            context.globalAlpha = 1.0;
+        }
+
+        if (timeLeft <= 0) {
+            shieldActive = false;
+        }
     }
-
-    // Auto-disable shield
-    if (timeLeft <= 0) {
-        shieldActive = false;
-    }
-}
-
 
     // Handle powerups
     for (let i = powerUpArray.length - 1; i >= 0; i--) {
@@ -452,60 +579,51 @@ if (shieldActive) {
     // Handle enemies
     for (let i = enemyArray.length - 1; i >= 0; i--) {
         let e = enemyArray[i];
-        e.x += e.speed ;
+        e.x += e.speed;
         context.drawImage(e.img, e.x, e.y, e.width, e.height);
         
         if (!shieldActive && detectCollision(Superman, e)) {
-            // Draw collision image 1x the size of Superman, centered on Superman
             drawCollisionEffect(Superman.x, Superman.y, Superman.width, Superman.height);
-
             endGame();
         }
-        
-        
         
         if (e.x < -e.width) enemyArray.splice(i, 1);
     }
 
     const now = Date.now();
 
-if (now - lastPowerUpSpawn > powerUpSpawnInterval) {
-    spawnPowerUp();
-    lastPowerUpSpawn = now;
-}
+    if (now - lastPowerUpSpawn > powerUpSpawnInterval) {
+        spawnPowerUp();
+        lastPowerUpSpawn = now;
+    }
 
-if (now - lastEnemySpawn > enemySpawnInterval) {
-    spawnEnemy();
-    lastEnemySpawn = now;
-}
-
+    if (now - lastEnemySpawn > enemySpawnInterval) {
+        spawnEnemy();
+        lastEnemySpawn = now;
+    }
 }
 
 function updateDifficulty() {
-    // Cap level at MAX_DIFFICULTY_LEVEL for speed calculations
     const effectiveLevel = Math.min(currentLevel, MAX_DIFFICULTY_LEVEL);
     velocityX = baseVelocityX + (levelSpeedIncrease * effectiveLevel);
     velocityX = Math.max(maxVelocityX, velocityX);
 }
 
 function placePipes() {
-
-    pipeArray.push(topPipe, bottomPipe);
     if (gameOver || !gameStarted) return;
+    
     const currentGap = basePipeGap;
-    let minPipeY = -pipeHeight + 50; // Original minimum Y position
-    let maxPipeY = 0 - currentGap - 150; // Original maximum Y position
+    let minPipeY = -pipeHeight + 50;
+    let maxPipeY = 0 - currentGap - 150;
     let randomPipeY = Math.random() * (maxPipeY - minPipeY) + minPipeY;
 
     let gapTopY = randomPipeY + pipeHeight;
     let gapBottomY = gapTopY + basePipeGap;
-    lastPipeGap = { top: gapTopY, bottom: gapBottomY }; // Save the current gap
-
+    lastPipeGap = { top: gapTopY, bottom: gapBottomY };
 
     let obstacleChance = baseObstacleChance + currentLevel * obstacleIncreasePerLevel;
     obstacleChance = Math.min(obstacleChance, 0.75);
 
-    // Restore original pipe type logic
     let topPipeType = Math.random() < obstacleChance ? "obstacle" : "normal";
     let bottomPipeType = Math.random() < obstacleChance ? "obstacle" : "normal";
 
@@ -519,7 +637,6 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
-        
     });
 
     pipeArray.push({
@@ -529,26 +646,17 @@ function placePipes() {
         width: pipeWidth,
         height: pipeHeight,
         passed: false,
-        
     });
-
 }
 
 function setDynamicPipeInterval() {
-    // Cap level at MAX_DIFFICULTY_LEVEL for interval calculation
     const effectiveLevel = Math.min(currentLevel, MAX_DIFFICULTY_LEVEL);
-    
-    // Calculate interval with capped level
     let interval = basePipeInterval - (effectiveLevel * PIPE_INTERVAL_REDUCTION_PER_LEVEL);
-    
-    // Ensure minimum interval
     interval = Math.max(interval, minPipeInterval);
-    
     return setInterval(placePipes, interval);
 }
 
 function handleKeyPress(e) {
-    
     if (e.code === "KeyM") toggleSound();
     if (isCountdownActive) return;
     if (e.code === "KeyP" && !gameOver) {
@@ -561,48 +669,11 @@ function handleKeyPress(e) {
     }
 
     if (gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
-        velocityY = -6;
-        if (soundEnabled) {
-            flySound.currentTime = 0;
-            flySound.play();
-        }
+        jump();
     }
 
     if (gameOver && e.code === "Enter") restartGame();
 }
-
-function handleTouch(e) {
-    e.preventDefault(); // prevent scrolling on mobile
-
-    if (isCountdownActive) return;
-
-    // Start game if not started yet
-    if (!gameStarted && !gameOver) {
-        startGame();
-        return;
-    }
-
-    // If game is over, restart
-    if (gameOver) {
-        restartGame();
-        return;
-    }
-
-    // Fly action
-    if (gameStarted && !gameOver && !isPaused) {
-        velocityY = -6;
-        if (soundEnabled) {
-            flySound.currentTime = 0;
-            flySound.play();
-        }
-    }
-
-    // If game is paused, resume
-    if (isPaused) {
-        resumeGame();
-    }
-}
-
 
 function restartGame() {
     if (pipeInterval) {
@@ -628,73 +699,57 @@ function restartGame() {
     powerUpArray = [];
     enemyArray = [];
 
-    context.clearRect(0, 0, board.width, board.height);
-    uiContext.clearRect(0, 0, board.width, board.height);
+    context.clearRect(0, 0, boardWidth, boardHeight);
+    uiContext.clearRect(0, 0, boardWidth, boardHeight);
 
-    if (soundEnabled) bgMusic.play();
+    if (soundEnabled) bgMusic.play().catch(() => {});
     showHomepage();
-    document.getElementById("powerup-count").textContent = "Double Jumps: 0";
 }
 
 function endGame() {
     gameOver = true;
-    // highScore = Math.max(highScore, Math.floor(score));
 
     if (score > highScore) {
         highScore = score;
         localStorage.setItem("supermanHighScore", highScore);
     }
 
-
-    // Hide the pause button after the game ends
-    pauseBtn.style.display = "none";  // Hide the pause button
-
-    // Keep board visible for background
-    board.style.display = "block";  // Changed from "none"
-    homepage.style.display = "none";
+    pauseBtn.style.display = "none";
+    board.style.display = "block";
+    document.querySelector('.homepage-container').style.display = "none";
     
-    // Show UI canvas and game over elements
     ui.style.display = "block";
     restartBtn.style.display = "block";
     
-    // Clear and redraw UI
-    uiContext.clearRect(0, 0, board.width, board.height);
+    uiContext.clearRect(0, 0, boardWidth, boardHeight);
     
-    // Draw semi-transparent overlay
-    uiContext.fillStyle = "rgba(0, 0, 0, 0.5)";  // Reduced opacity to 50%
+    uiContext.fillStyle = "rgba(0, 0, 0, 0.5)";
     uiContext.fillRect(0, 0, boardWidth, boardHeight);
     
     const centerX = boardWidth / 2;
     
-    // Game Over Image
     uiContext.drawImage(gameOverImg, centerX - 225, 95, 450, 200);
     
-    // Scores
     uiContext.fillStyle = "#FFD700";
     uiContext.font = "bold 45px 'Arial Black'";
     uiContext.textAlign = "center";
     uiContext.fillText(Math.floor(score), centerX, 100);
     
-    // High Score
     uiContext.drawImage(highScoreImg, centerX - 110, 280, 150, 80);
     uiContext.fillText(highScore, centerX + 75, 330);
 
-    // Sound controls
     soundBtnGameover.style.display = soundEnabled ? "block" : "none";
     muteBtnGameover.style.display = soundEnabled ? "none" : "block";
 
-    // Stop game elements
     if (pipeInterval) clearInterval(pipeInterval);
     bgMusic.pause();
     
     if (soundEnabled) {
         hitSound.currentTime = 0;
-        hitSound.play();
+        hitSound.play().catch(() => {});
     }
-    document.getElementById("powerup-count").style.display = "none";
 }
 
-// New helper functions
 function spawnPowerUp() {
     powerUpArray.push({
         img: powerUpImg,
@@ -710,7 +765,6 @@ function spawnEnemy() {
     let y;
     let tries = 0;
 
-    // Retry logic to avoid spawning in the pipe gap
     do {
         y = Math.random() * (boardHeight - enemyHeight);
         tries++;
@@ -723,7 +777,7 @@ function spawnEnemy() {
 
     let speed = baseEnemySpeed + (enemySpeedIncrease * currentLevel);
     speed = Math.max(maxEnemySpeed, speed);
-    speed += (Math.random() - 0.5); // Small random variation
+    speed += (Math.random() - 0.5);
 
     enemyArray.push({
         img: enemyImg,
@@ -735,10 +789,8 @@ function spawnEnemy() {
     });
 }
 
-
-// Modified collision detection
 function detectCollision(a, b) {
-    if (shieldActive) return false; // No collisions when shield is active
+    if (shieldActive) return false;
     
     return (
         a.x < b.x + b.width &&
@@ -757,26 +809,21 @@ function drawCollisionEffect(x, y, width, height) {
     context.drawImage(collisionImg, collisionX, collisionY, collisionW, collisionH);
 }
 
-
 function showHomepage() {
-    // Reset all displays
-    homepage.style.display = "block";
+    document.querySelector('.homepage-container').style.display = "flex";
     board.style.display = "none";
     ui.style.display = "none";
     
-    // Show/hide buttons
-    document.getElementById("start-btn").style.display = "block";
-    document.getElementById("restart-btn").style.display = "none";
-    document.getElementById("pause-btn").style.display = "none";
-    document.getElementById("play-btn").style.display = "none";
+    startBtn.style.display = "block";
+    restartBtn.style.display = "none";
+    pauseBtn.style.display = "none";
+    playBtn.style.display = "none";
     
-    // Sound buttons
-    document.getElementById("sound-btn-home").style.display = soundEnabled ? "block" : "none";
-    document.getElementById("mute-btn-home").style.display = soundEnabled ? "none" : "block";
-    document.getElementById("sound-btn-gameover").style.display = "none";
-    document.getElementById("mute-btn-gameover").style.display = "none";
+    soundBtnHome.style.display = soundEnabled ? "block" : "none";
+    muteBtnHome.style.display = soundEnabled ? "none" : "block";
+    soundBtnGameover.style.display = "none";
+    muteBtnGameover.style.display = "none";
     
-    // Reset game state
     gameOver = false;
     gameStarted = false;
     pipeArray = [];
