@@ -24,13 +24,13 @@ let resumeBtn = document.getElementById("resume-btn");
 let powerUpImg = new Image();
 let enemyImg = new Image();
 let shieldActive = false;
-let shieldDuration = 5000; // 5 seconds
+let shieldDuration = 5000;
 let shieldEndTime = 0;
 let powerUpArray = [];
 let lastPowerUpSpawn = 0;
-let powerUpSpawnInterval = 10000; // 10 seconds
+let powerUpSpawnInterval = 10000;
 let enemyArray = [];
-let enemySpawnInterval = 4000; // 4 seconds
+let enemySpawnInterval = 4000;
 let lastEnemySpawn = 0;
 
 // Enemy parameters
@@ -121,60 +121,51 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
+// Touch handling flags
+let touchHandled = false;
+let lastTouchTime = 0;
+
 // Canvas setup with proper scaling
 function setupCanvas() {
-    // Get device pixel ratio for crisp rendering
     dpr = window.devicePixelRatio || 1;
     
-    // Get the actual size of the game container
     const gameContainer = document.querySelector('.game-container');
     const containerRect = gameContainer.getBoundingClientRect();
     
-    // Calculate scale based on container size
     scale = Math.min(
         containerRect.width / baseWidth,
         containerRect.height / baseHeight
     );
     
-    // Set logical canvas size
     boardWidth = baseWidth;
     boardHeight = baseHeight;
     
-    // Set canvas display size
     board.style.width = containerRect.width + 'px';
     board.style.height = containerRect.height + 'px';
     ui.style.width = containerRect.width + 'px';
     ui.style.height = containerRect.height + 'px';
     
-    // Set actual canvas size for crisp rendering
     board.width = baseWidth * dpr;
     board.height = baseHeight * dpr;
     ui.width = baseWidth * dpr;
     ui.height = baseHeight * dpr;
     
-    // Get contexts and scale them
     context = board.getContext("2d");
     uiContext = ui.getContext("2d");
     
-    // Scale the drawing context
     context.scale(dpr, dpr);
     uiContext.scale(dpr, dpr);
     
-    // Enable crisp pixel rendering
     context.imageSmoothingEnabled = false;
     uiContext.imageSmoothingEnabled = false;
 }
 
 // Enhanced resize handler
 function handleResize() {
-    const gameContainer = document.querySelector('.game-container');
-    
-    // Debounce resize events
     clearTimeout(window.resizeTimeout);
     window.resizeTimeout = setTimeout(() => {
         setupCanvas();
         
-        // Redraw if game is active
         if (gameStarted && !gameOver && !isPaused) {
             requestAnimationFrame(update);
         } else if (!gameStarted) {
@@ -183,30 +174,136 @@ function handleResize() {
     }, 100);
 }
 
-// Enhanced touch handling
-function setupTouchEvents() {
-    const gameContainer = document.querySelector('.game-container');
-    
-    // Prevent default touch behaviors
-    gameContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
-    gameContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-    gameContainer.addEventListener('touchend', handleTouchEnd, { passive: false });
-    gameContainer.addEventListener('touchcancel', handleTouchCancel, { passive: false });
-    
-    // Mouse events for desktop
-    gameContainer.addEventListener('mousedown', handleMouseDown);
-    gameContainer.addEventListener('click', handleClick);
+// Fixed button event handling
+function setupButtonEvents() {
+    // Helper function to handle both click and touch events
+    function addUniversalEventListener(element, handler) {
+        if (!element) return;
+        
+        // Remove existing listeners to prevent duplicates
+        element.removeEventListener('click', handler);
+        element.removeEventListener('touchend', handler);
+        
+        // Add click listener for desktop
+        element.addEventListener('click', handler, { passive: false });
+        
+        // Add touch listener for mobile
+        element.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handler(e);
+        }, { passive: false });
+        
+        // Prevent context menu on long press
+        element.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+    }
+
+    // Setup all button events
+    addUniversalEventListener(startBtn, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        startGame();
+    });
+
+    addUniversalEventListener(restartBtn, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        restartGame();
+    });
+
+    addUniversalEventListener(soundBtnHome, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSound();
+    });
+
+    addUniversalEventListener(muteBtnHome, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSound();
+    });
+
+    addUniversalEventListener(pauseBtn, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        pauseGame();
+    });
+
+    addUniversalEventListener(playBtn, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        resumeGame();
+    });
+
+    addUniversalEventListener(soundBtnGameover, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSound();
+    });
+
+    addUniversalEventListener(muteBtnGameover, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSound();
+    });
+
+    addUniversalEventListener(resumeBtn, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        resumeGame();
+    });
+
+    addUniversalEventListener(soundBtnPause, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSound();
+    });
+
+    addUniversalEventListener(muteBtnPause, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSound();
+    });
 }
 
-function handleTouchStart(e) {
-    e.preventDefault();
+// Fixed touch handling for game area (not buttons)
+function setupGameTouchEvents() {
+    const gameContainer = document.querySelector('.game-container');
     
-    if (isCountdownActive) return;
+    // Touch start handler
+    gameContainer.addEventListener('touchstart', function(e) {
+        // Only handle if touch is NOT on a button
+        if (e.target.closest('.game-control')) {
+            return; // Let button handle it
+        }
+        
+        e.preventDefault();
+        handleGameTouch(e);
+    }, { passive: false });
+
+    // Mouse click handler for desktop
+    gameContainer.addEventListener('click', function(e) {
+        // Only handle if click is NOT on a button
+        if (e.target.closest('.game-control')) {
+            return; // Let button handle it
+        }
+        
+        handleGameTouch(e);
+    });
+}
+
+function handleGameTouch(e) {
+    const currentTime = Date.now();
     
-    // Check if touch is on a button
-    if (e.target.closest('.game-control')) {
-        return; // Let button handle it
+    // Prevent double-tap issues
+    if (currentTime - lastTouchTime < 200) {
+        return;
     }
+    lastTouchTime = currentTime;
+
+    if (isCountdownActive) return;
     
     // Game touch logic
     if (!gameStarted && !gameOver) {
@@ -220,33 +317,6 @@ function handleTouchStart(e) {
     }
 }
 
-function handleTouchMove(e) {
-    e.preventDefault(); // Prevent scrolling
-}
-
-function handleTouchEnd(e) {
-    e.preventDefault();
-}
-
-function handleTouchCancel(e) {
-    e.preventDefault();
-}
-
-function handleMouseDown(e) {
-    if (e.target.closest('.game-control')) {
-        return; // Let button handle it
-    }
-    
-    // Same logic as touch for desktop
-    handleTouchStart(e);
-}
-
-function handleClick(e) {
-    if (e.target.closest('.game-control')) {
-        return; // Let button handle it
-    }
-}
-
 function jump() {
     velocityY = -6;
     if (soundEnabled) {
@@ -255,40 +325,11 @@ function jump() {
     }
 }
 
-// Button feedback
-function addButtonFeedback() {
-    const buttons = document.querySelectorAll('.game-control');
-    
-    buttons.forEach(button => {
-        button.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-            button.classList.add('pressed');
-        }, { passive: true });
-        
-        button.addEventListener('touchend', () => {
-            button.classList.remove('pressed');
-        }, { passive: true });
-        
-        button.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            button.classList.add('pressed');
-        });
-        
-        button.addEventListener('mouseup', () => {
-            button.classList.remove('pressed');
-        });
-        
-        button.addEventListener('mouseleave', () => {
-            button.classList.remove('pressed');
-        });
-    });
-}
-
 // Initialize game
 window.addEventListener('load', function () {
     setupCanvas();
-    setupTouchEvents();
-    addButtonFeedback();
+    setupButtonEvents(); // Setup button events first
+    setupGameTouchEvents(); // Then setup game area touch events
     
     // Load images
     powerUpImg.src = "./images/powerups.png";
@@ -305,38 +346,24 @@ window.addEventListener('load', function () {
     // Initialize sound
     bgMusic.loop = true;
     updateSoundDisplay();
-
-    // Set up button event listeners
-    startBtn.addEventListener("click", startGame);
-    restartBtn.addEventListener("click", restartGame);
-    soundBtnHome.addEventListener("click", toggleSound);
-    muteBtnHome.addEventListener("click", toggleSound);
-    pauseBtn.addEventListener("click", pauseGame);
-    playBtn.addEventListener("click", resumeGame);
-    soundBtnGameover.addEventListener("click", toggleSound);
-    muteBtnGameover.addEventListener("click", toggleSound);
-    resumeBtn.addEventListener("click", resumeGame);
-    soundBtnPause.addEventListener("click", toggleSound);
-    muteBtnPause.addEventListener("click", toggleSound);
     
     // Keyboard events
     document.addEventListener("keydown", handleKeyPress);
 
-    // Resize handler
+    // Resize handlers
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', () => {
-        setTimeout(handleResize, 100); // Delay for orientation change
+        setTimeout(handleResize, 100);
     });
 
     // Initial setup
     showHomepage();
 });
 
-// Rest of the game functions remain the same, but with enhanced error handling
+// Rest of the game functions with minor fixes
 function toggleSound() {
     soundEnabled = !soundEnabled;
     
-    // Update only relevant controls based on current screen
     if (gameOver) {
         soundBtnGameover.style.display = soundEnabled ? "block" : "none";
         muteBtnGameover.style.display = soundEnabled ? "none" : "block";
@@ -399,7 +426,6 @@ function startGame() {
     pipeArray = [];
     isLevelAnimating = false;
     
-    // Hide/show elements
     document.querySelector('.homepage-container').style.display = "none";
     board.style.display = "block";
     ui.style.display = "block";
@@ -409,7 +435,6 @@ function startGame() {
     soundBtnHome.style.display = "none";
     muteBtnHome.style.display = "none";
 
-    // Start countdown
     isCountdownActive = true;
     countdown = 3;
     animateCountdown();
@@ -418,14 +443,11 @@ function startGame() {
 function animateCountdown() {
     if (!isCountdownActive) return;
 
-    // Clear canvases
     context.clearRect(0, 0, boardWidth, boardHeight);
     uiContext.clearRect(0, 0, boardWidth, boardHeight);
 
-    // Draw Superman
     context.drawImage(SupermanImg, Superman.x, Superman.y, Superman.width, Superman.height);
 
-    // Animate countdown number
     const fontSize = 100 + (50 * (countdown - Math.floor(countdown)));
     const alpha = 1 - (countdown - Math.floor(countdown));
     
@@ -434,7 +456,7 @@ function animateCountdown() {
     uiContext.textAlign = "center";
     uiContext.fillText(Math.ceil(countdown).toString(), boardWidth/2, boardHeight/2);
 
-    countdown -= 0.016; // Decrement by ~1/60th of a second
+    countdown -= 0.016;
 
     if (countdown <= 0) {
         isCountdownActive = false;
