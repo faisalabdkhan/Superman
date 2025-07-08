@@ -1,387 +1,330 @@
 /* Reset and Base Styles */
 * {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #000;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
 }
 
 /* Safe Area for devices with notches */
 .safe-area {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #000;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
 }
 
 /* Game Wrapper - Maintains 9:16 Aspect Ratio */
 .game-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  max-width: min(100vw, 100vh * 9 / 16);
-  max-height: min(100vh, 100vw * 16 / 9);
-  aspect-ratio: 9 / 16;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #000;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: min(100vw, 100vh * 9/16);
+    max-height: min(100vh, 100vw * 16/9);
+    aspect-ratio: 9/16;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
 }
 
 /* Game Container */
 .game-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-  overflow: hidden;
-  border-radius: min(2vw, 8px);
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    overflow: hidden;
+    border-radius: min(2vw, 8px);
 }
 
 /* Homepage Container */
 .homepage-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Homepage Image */
 #homepage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
 }
 
 /* Canvas Styles */
-#board,
-#ui {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  image-rendering: crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  display: none;
+#board, #ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    display: none;
 }
 
 #board {
-  z-index: 2;
-  background-image: url("images/backgrond.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+    z-index: 2;
+    background-image: url("images/backgrond.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 #ui {
-  z-index: 3;
-}
-
-/* Game Touch Area - Only active during gameplay */
-.game-touch-area {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 4;
-  pointer-events: none;
-  touch-action: manipulation;
-}
-
-.game-touch-area.active {
-  pointer-events: auto;
+    z-index: 3;
 }
 
 /* Enhanced button responsiveness */
 .game-control {
-  position: absolute;
-  cursor: pointer;
-  z-index: 100;
-  border: none;
-  background: transparent;
-  padding: max(8px, 1vmin);
-  pointer-events: auto;
-  transition: transform 0.15s ease, opacity 0.15s ease;
-  border-radius: max(4px, 0.5vmin);
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
+    position: absolute;
+    cursor: pointer;
+    z-index: 100;
+    border: none;
+    background: transparent;
+    padding: max(8px, 1vmin);
+    pointer-events: auto;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    border-radius: max(4px, 0.5vmin);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 
-  /* Enhanced touch support */
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    /* Enhanced touch support */
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
-  /* Ensure minimum touch target size (44px minimum for accessibility) */
-  min-width: 44px;
-  min-height: 44px;
+    /* Ensure minimum touch target size */
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .game-control:active {
-  transform: scale(0.95);
-  filter: brightness(0.9);
-}
-
-.game-control:focus-visible {
-  outline: 2px solid #ffd700;
-  outline-offset: 2px;
+    transform: scale(0.95);
+    filter: brightness(0.9);
 }
 
 .game-control img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  /* Prevent image selection */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    /* Prevent image selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 /* Improved start button positioning */
 #start-btn {
-  left: 50%;
-  top: 60%;
-  transform: translate(-50%, -50%);
-  width: max(140px, 20vmin);
-  height: max(60px, 8vmin);
-  z-index: 101;
-  min-width: 120px;
-  min-height: 50px;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    width: max(140px, 20vmin);
+    height: max(60px, 8vmin);
+    z-index: 101;
+    min-width: 120px;
+    min-height: 50px;
 }
 
 /* Restart Button */
 #restart-btn {
-  left: 50%;
-  top: 65%;
-  transform: translate(-50%, -50%);
-  width: max(80px, 12vmin);
-  height: max(80px, 12vmin);
-  display: none;
+    left: 50%;
+    top: 65%;
+    transform: translate(-50%, -50%);
+    width: max(80px, 12vmin);
+    height: max(80px, 12vmin);
+    display: none;
 }
 
 /* Sound Control Buttons - Home Screen */
-#sound-btn-home,
+#sound-btn-home, 
 #mute-btn-home {
-  left: max(10px, 2vmin);
-  top: max(10px, 2vmin);
-  width: max(40px, 6vmin);
-  height: max(40px, 6vmin);
-  z-index: 101;
+    left: max(10px, 2vmin);
+    top: max(10px, 2vmin);
+    width: max(40px, 6vmin);
+    height: max(40px, 6vmin);
+    z-index: 101;
 }
 
 /* Game Control Buttons - In Game */
-#pause-btn,
+#pause-btn, 
 #play-btn {
-  right: max(10px, 2vmin);
-  top: max(10px, 2vmin);
-  width: max(40px, 6vmin);
-  height: max(40px, 6vmin);
-  z-index: 101;
-  display: none;
+    right: max(10px, 2vmin);
+    top: max(10px, 2vmin);
+    width: max(40px, 6vmin);
+    height: max(40px, 6vmin);
+    z-index: 101;
+    display: none;
 }
 
 /* Sound Control Buttons - Game Over */
-#sound-btn-gameover,
+#sound-btn-gameover, 
 #mute-btn-gameover {
-  left: 50%;
-  top: 75%;
-  transform: translate(-50%, -50%);
-  width: max(60px, 8vmin);
-  height: max(60px, 8vmin);
-  display: none;
+    left: 50%;
+    top: 75%;
+    transform: translate(-50%, -50%);
+    width: max(60px, 8vmin);
+    height: max(60px, 8vmin);
+    display: none;
 }
 
 /* Pause Overlay */
 .pause-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 200;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  gap: max(20px, 3vmin);
-  backdrop-filter: blur(4px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 200;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: max(20px, 3vmin);
+    backdrop-filter: blur(4px);
 }
 
 .pause-overlay .game-control {
-  width: max(80px, 12vmin);
-  height: max(80px, 12vmin);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: max(8px, 1vmin);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+    width: max(80px, 12vmin);
+    height: max(80px, 12vmin);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: max(8px, 1vmin);
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .pause-overlay .game-control:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Game Over Elements */
 .game-over-elements {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 150;
-  display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 150;
+    display: none;
 }
 
 /* Responsive Design for Different Screen Sizes */
 @media (max-width: 480px) {
-  #start-btn {
-    width: max(120px, 30vw);
-    height: max(50px, 12vw);
-    top: 58%;
-  }
-  .game-control {
-    min-width: 48px;
-    min-height: 48px;
-  }
-  .pause-overlay {
-    gap: max(15px, 2vmin);
-  }
-  .pause-overlay .game-control {
-    width: max(70px, 10vmin);
-    height: max(70px, 10vmin);
-  }
+    #start-btn {
+        width: max(120px, 30vw);
+        height: max(50px, 12vw);
+        top: 58%;
+    }
+    .game-control {
+        min-width: 48px;
+        min-height: 48px;
+    }
+    .pause-overlay {
+        gap: max(15px, 2vmin);
+    }
+    .pause-overlay .game-control {
+        width: max(70px, 10vmin);
+        height: max(70px, 10vmin);
+    }
 }
 
 @media (max-height: 600px) {
-  #start-btn {
-    top: 55%;
-  }
-  #restart-btn {
-    top: 60%;
-  }
-  #sound-btn-gameover,
-  #mute-btn-gameover {
-    top: 70%;
-  }
+    #start-btn {
+        top: 55%;
+    }
+    #restart-btn {
+        top: 60%;
+    }
+    #sound-btn-gameover, 
+    #mute-btn-gameover {
+        top: 70%;
+    }
 }
 
 /* Landscape Mode Adjustments */
 @media (orientation: landscape) and (max-height: 500px) {
-  .game-wrapper {
-    max-width: min(100vh * 9 / 16, 100vw);
-    max-height: 100vh;
-  }
-  #start-btn {
-    top: 50%;
-    width: max(100px, 15vmin);
-    height: max(40px, 6vmin);
-  }
-  .pause-overlay .game-control {
-    width: max(60px, 8vmin);
-    height: max(60px, 8vmin);
-  }
-}
-
-/* Ultra-wide screens */
-@media (min-aspect-ratio: 21 / 9) {
-  .game-wrapper {
-    max-width: 50vh;
-  }
-}
-
-/* Very tall screens */
-@media (max-aspect-ratio: 1 / 2) {
-  .game-wrapper {
-    max-height: 200vw;
-  }
+    .game-wrapper {
+        max-width: min(100vh * 9/16, 100vw);
+        max-height: 100vh;
+    }
+    #start-btn {
+        top: 50%;
+        width: max(100px, 15vmin);
+        height: max(40px, 6vmin);
+    }
+    .pause-overlay .game-control {
+        width: max(60px, 8vmin);
+        height: max(60px, 8vmin);
+    }
 }
 
 /* High DPI Display Support */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  #board,
-  #ui {
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-  }
+    #board, #ui {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
 }
 
-/* Animation for button states */
-@keyframes buttonPress {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.game-control.pressed {
-  animation: buttonPress 0.1s ease;
+/* Focus and Accessibility */
+.game-control:focus-visible {
+    outline: 2px solid #FFD700;
+    outline-offset: 2px;
 }
 
 /* Loading State */
 .loading {
-  opacity: 0.7;
-  pointer-events: none;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Animation for button states */
+@keyframes buttonPress {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.game-control.pressed {
+    animation: buttonPress 0.1s ease;
 }
 
 /* Print Styles */
 @media print {
-  .game-wrapper {
-    display: none;
-  }
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-  .game-control {
-    transition: none;
-  }
-
-  .game-control.pressed {
-    animation: none;
-  }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .pause-overlay .game-control {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
+    .game-wrapper {
+        display: none;
+    }
 }
