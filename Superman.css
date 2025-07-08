@@ -187,6 +187,7 @@ html, body {
     width: max(40px, 6vmin);
     height: max(40px, 6vmin);
     z-index: 101;
+    display: none;
 }
 
 /* Sound Control Buttons - Game Over */
