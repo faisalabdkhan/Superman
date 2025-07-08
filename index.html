@@ -2,76 +2,561 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Superman Game</title>
     <link rel="icon" type="image/png" href="images/fav6.png">
     <link rel="stylesheet" href="Superman.css">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+            touch-action: none;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* Remove all the existing media queries for .game-container and replace with: */
+        @media (orientation: portrait) {
+            .game-container {
+                width: 100vw;
+                height: 100vh;
+            }
+        }
+
+        @media (orientation: landscape) {
+            .game-container {
+                width: 100vw;
+                height: 100vh;
+            }
+        }
+
+        #homepage, #board, #ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        #homepage { 
+            z-index: 10; 
+            background-size: cover;
+            background-position: center;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        #board { 
+            z-index: 1;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        #ui { 
+            z-index: 15;
+            pointer-events: none;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        /* Standardized Button Styles */
+        .game-control {
+            position: absolute;
+            cursor: pointer;
+            z-index: 1000;
+            border: none;
+            background: transparent;
+            padding: 4px;
+            display: none;
+            pointer-events: auto;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            transition: transform 0.1s ease, opacity 0.1s ease;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-control:active,
+        .game-control.button-active {
+            transform: scale(0.9);
+            opacity: 0.7;
+        }
+        
+        .game-control img {
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Standard Button Sizes */
+        .btn-large {
+            width: 160px;
+            height: 70px;
+            min-width: 160px;
+            min-height: 70px;
+        }
+
+        .btn-medium {
+            width: 80px;
+            height: 80px;
+            min-width: 80px;
+            min-height: 80px;
+        }
+
+        .btn-small {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            min-height: 50px;
+        }
+
+        /* Specific Button Positioning */
+        #start-btn {
+            left: 50%;
+            top: 65%;
+            transform: translateX(-50%);
+        }
+
+        #achievements-btn {
+            left: 50%;
+            top: 75%;
+            transform: translateX(-50%);
+        }
+        
+        /* Game Over Screen Layout - Fixed Overlapping */
+        #restart-btn {
+            left: 25%;
+            top: 75%;
+            transform: translateX(-50%);
+        }
+
+        #sound-btn-gameover, #mute-btn-gameover {
+            right: 25%;
+            top: 75%;
+            transform: translateX(50%);
+        }
+
+        /* Home Screen Controls */
+        #sound-btn-home, #mute-btn-home {
+            left: 15px;
+            top: 15px;
+        }
+
+        /* Game Controls */
+        #pause-btn, #play-btn {
+            right: 15px;
+            top: 15px;
+        }
+
+        .pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 25;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            pointer-events: auto;
+        }
+
+        .pause-overlay .game-control {
+            display: flex;
+        }
+
+        /* Achievement System Styles */
+        .achievements-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 30;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+            pointer-events: auto;
+        }
+
+        .achievements-header {
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 20px;
+        }
+
+        .achievement-card {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card.unlocked {
+            background: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            border-color: #666;
+        }
+
+        .achievement-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .achievement-title {
+            color: #FFD700;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .achievement-description {
+            color: #FFF;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .achievement-notification {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 215, 0, 0.95);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 100;
+            display: none;
+            animation: achievementPop 3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+        }
+
+        @keyframes achievementPop {
+            0% { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            10% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            90% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+        }
+
+        .close-achievements {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #board, #ui { display: none; }
+        #homepage { display: block; }
+
+        /* Responsive Button Adjustments */
+        @media (max-width: 480px) {
+            .btn-large {
+                width: 140px;
+                height: 60px;
+                min-width: 140px;
+                min-height: 60px;
+            }
+
+            .btn-medium {
+                width: 70px;
+                height: 70px;
+                min-width: 70px;
+                min-height: 70px;
+            }
+
+            .btn-small {
+                width: 45px;
+                height: 45px;
+                min-width: 45px;
+                min-height: 45px;
+            }
+
+            #start-btn {
+                top: 60%;
+            }
+
+            #achievements-btn {
+                top: 70%;
+            }
+
+            #restart-btn,
+            #sound-btn-gameover,
+            #mute-btn-gameover {
+                top: 70%;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 280px;
+            }
+
+            .achievement-card {
+                padding: 10px;
+            }
+
+            .achievement-icon {
+                font-size: 24px;
+            }
+
+            .achievement-title {
+                font-size: 11px;
+            }
+
+            .achievement-description {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .btn-large {
+                width: 120px;
+                height: 50px;
+                min-width: 120px;
+                min-height: 50px;
+            }
+
+            .btn-medium {
+                width: 60px;
+                height: 60px;
+                min-width: 60px;
+                min-height: 60px;
+            }
+
+            .btn-small {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                min-height: 40px;
+            }
+
+            #sound-btn-home, #mute-btn-home {
+                left: 10px;
+                top: 10px;
+            }
+            
+            #pause-btn, #play-btn {
+                right: 10px;
+                top: 10px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+                max-width: 250px;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .game-container {
+                height: 100vh;
+                width: calc(100vh * 0.5625);
+            }
+            
+            #start-btn {
+                top: 55%;
+            }
+
+            #achievements-btn {
+                top: 65%;
+            }
+            
+            #restart-btn,
+            #sound-btn-gameover,
+            #mute-btn-gameover {
+                top: 65%;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .game-control img {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: optimize-contrast;
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 768px) and (min-height: 1024px) {
+            .game-container {
+                width: 400px;
+                height: 711px;
+            }
+
+            .btn-large {
+                width: 180px;
+                height: 80px;
+                min-width: 180px;
+                min-height: 80px;
+            }
+
+            .btn-medium {
+                width: 90px;
+                height: 90px;
+                min-width: 90px;
+                min-height: 90px;
+            }
+
+            .btn-small {
+                width: 55px;
+                height: 55px;
+                min-width: 55px;
+                min-height: 55px;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 350px;
+            }
+        }
+
+        /* Prevent text selection and context menus */
+        .game-container * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Accessibility improvements */
+        .game-control:focus {
+            outline: 2px solid #ffd700;
+            outline-offset: 2px;
+        }
+
+        /* Button hover effects for desktop */
+        @media (hover: hover) {
+            .game-control:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="safe-area">
-        <div class="game-wrapper">
-            <div class="game-container">
-                <!-- Homepage Image -->
-                <div class="homepage-container">
-                    <img id="homepage" src="images/AMMAN.png" alt="Superman Game Homepage">
-                </div>
-                
-                <!-- Game Canvases -->
-                <canvas id="board"></canvas>
-                <canvas id="ui"></canvas>
+    <div class="game-container">
+        <img id="homepage" src="images/AMMAN.png" alt="Game Background">
+        <canvas id="board"></canvas>
+        <canvas id="ui"></canvas>
+
+        <!-- Game Controls with standardized classes -->
+        <button id="start-btn" class="game-control btn-large" aria-label="Start Game">
+            <img src="images/start.png" alt="Start Game">
+        </button>
+        <button id="achievements-btn" class="game-control btn-medium" aria-label="View Achievements">
+            🏆
+        </button>
+        <button id="restart-btn" class="game-control btn-medium" aria-label="Restart Game">
+            <img src="images/retry.png" alt="Restart Game">
+        </button>
         
-                <!-- Game Controls -->
-                <button id="start-btn" class="game-control touch-target" type="button" aria-label="Start Game">
-                    <img src="images/start.png" alt="Start Game" width="140" height="60">
-                </button>
-                
-                <button id="restart-btn" class="game-control touch-target" type="button" aria-label="Restart Game">
-                    <img src="images/retry.png" alt="Restart Game" width="80" height="80">
-                </button>
-                
-                <!-- Sound Controls -->
-                <button id="sound-btn-home" class="game-control touch-target" type="button" aria-label="Enable Sound">
-                    <img src="images/sound.png" alt="Sound On" width="40" height="40">
-                </button>
-                
-                <button id="mute-btn-home" class="game-control touch-target" type="button" aria-label="Mute Sound">
-                    <img src="images/mute.png" alt="Sound Off" width="40" height="40">
-                </button>
-                
-                <button id="pause-btn" class="game-control touch-target" type="button" aria-label="Pause Game">
-                    <img src="images/pause.png" alt="Pause" width="40" height="40">
-                </button>
-                
-                <button id="play-btn" class="game-control touch-target" type="button" aria-label="Resume Game">
-                    <img src="images/play.png" alt="Play" width="40" height="40">
-                </button>
-                
-                <!-- Game Over Sound Controls -->
-                <button id="sound-btn-gameover" class="game-control touch-target" type="button" aria-label="Enable Sound">
-                    <img src="images/sound.png" alt="Sound On" width="40" height="40">
-                </button>
-                
-                <button id="mute-btn-gameover" class="game-control touch-target" type="button" aria-label="Mute Sound">
-                    <img src="images/mute.png" alt="Sound Off" width="40" height="40">
-                </button>
-                
-                <!-- Pause Overlay -->
-                <div id="pause-overlay" class="pause-overlay">
-                    <button id="resume-btn" class="game-control touch-target" type="button" aria-label="Resume Game">
-                        <img src="images/play.png" alt="Resume" width="80" height="80">
-                    </button>
-                    <button id="sound-btn-pause" class="game-control touch-target" type="button" aria-label="Enable Sound">
-                        <img src="images/sound.png" alt="Sound On" width="80" height="80">
-                    </button>
-                    <button id="mute-btn-pause" class="game-control touch-target" type="button" aria-label="Mute Sound">
-                        <img src="images/mute.png" alt="Sound Off" width="80" height="80">
-                    </button>
-                </div>
+        <!-- Sound Controls -->
+        <button id="sound-btn-home" class="game-control btn-small" aria-label="Sound On">
+            <img src="images/sound.png" alt="Sound On">
+        </button>
+        <button id="mute-btn-home" class="game-control btn-small" aria-label="Sound Off">
+            <img src="images/mute.png" alt="Sound Off">
+        </button>
+        <button id="pause-btn" class="game-control btn-small" aria-label="Pause Game">
+            <img src="images/pause.png" alt="Pause Game">
+        </button>
+        <button id="play-btn" class="game-control btn-small" aria-label="Resume Game">
+            <img src="images/play.png" alt="Resume Game">
+        </button>
+        <button id="sound-btn-gameover" class="game-control btn-medium" aria-label="Sound On">
+            <img src="images/sound.png" alt="Sound On">
+        </button>
+        <button id="mute-btn-gameover" class="game-control btn-medium" aria-label="Sound Off">
+            <img src="images/mute.png" alt="Sound Off">
+        </button>
+
+        <!-- Pause Overlay -->
+        <div id="pause-overlay" class="pause-overlay">
+            <button id="resume-btn" class="game-control btn-medium" aria-label="Resume Game">
+                <img src="images/play.png" alt="Resume Game">
+            </button>
+            <button id="sound-btn-pause" class="game-control btn-medium" aria-label="Sound On">
+                <img src="images/sound.png" alt="Sound On">
+            </button>
+            <button id="mute-btn-pause" class="game-control btn-medium" aria-label="Sound Off">
+                <img src="images/mute.png" alt="Sound Off">
+            </button>
+        </div>
+
+        <!-- Achievements Overlay -->
+        <div id="achievements-overlay" class="achievements-overlay">
+            <div class="achievements-header">🏆 ACHIEVEMENTS 🏆</div>
+            <div id="achievements-grid" class="achievements-grid">
+                <!-- Achievement cards will be populated by JavaScript -->
             </div>
+            <button class="close-achievements" onclick="closeAchievements()">CLOSE</button>
+        </div>
+
+        <!-- Achievement Notification -->
+        <div id="achievement-notification" class="achievement-notification">
+            <span id="achievement-text"></span>
         </div>
     </div>
     <script src="Superman.js"></script>
