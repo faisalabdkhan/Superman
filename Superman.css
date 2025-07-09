@@ -1,358 +1,343 @@
-/* Reset and Base Styles */
+/* Reset and base styles */
 * {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #000;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-}
-
-/* Safe Area for devices with notches */
-.safe-area {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #000;
-}
-
-/* Game Wrapper - Maintains 9:16 Aspect Ratio */
-.game-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: min(100vw, 100vh * 9/16);
-    max-height: min(100vh, 100vw * 16/9);
-    aspect-ratio: 9/16;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #000;
-}
-
-/* Game Container */
-.game-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    overflow: hidden;
-    border-radius: min(2vw, 8px);
-    pointer-events: none; /* Prevent touch events on container */
-}
-
-/* Homepage Container */
-.homepage-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Homepage Image */
-#homepage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-}
-
-/* Canvas Styles */
-#board, #ui {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    image-rendering: crisp-edges;
-    image-rendering: -webkit-crisp-edges;
-    image-rendering: pixelated;
-    display: none;
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000;
+  touch-action: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
 }
 
 #board {
-    z-index: 2;
-    background-image: url("images/backgrond.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  background-image: url("images/backgrond.png");
+  background-size: cover;
+  background-position: center;
+  touch-action: none;
+  image-rendering: optimizeSpeed;
 }
 
-#ui {
-    z-index: 3;
+/* Game Over Screen Elements */
+.game-over-elements {
+  display: none;
+  position: absolute;
+  z-index: 20;
 }
 
-/* Enhanced button responsiveness */
+/* Button Visibility Control */
+#sound-btn-home,
+#mute-btn-home,
+#sound-btn-gameover,
+#mute-btn-gameover,
+#sound-btn-pause,
+#mute-btn-pause {
+  display: none;
+}
+
+#restart-btn,
+#sound-btn-gameover,
+#achievements-btn {
+  display: none;
+}
+
+/* Enhanced Button Styles */
 .game-control {
-    position: absolute;
-    cursor: pointer;
-    z-index: 100;
-    border: none;
-    background: transparent;
-    padding: max(8px, 1vmin);
-    pointer-events: auto; /* Enable touch events only on buttons */
-    transition: transform 0.15s ease, opacity 0.15s ease;
-    border-radius: max(4px, 0.5vmin);
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-
-    /* Enhanced touch support */
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-    /* Ensure minimum touch target size */
-    min-width: 44px;
-    min-height: 44px;
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: all 0.1s ease;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 40px;
+  color: #ffd700;
+  font-weight: bold;
 }
 
-.game-control:active {
-    transform: scale(0.95);
-    filter: brightness(0.9);
+.game-control:active,
+.game-control.button-active {
+  transform: scale(0.9);
+  opacity: 0.7;
 }
 
 .game-control img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    /* Prevent image selection */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: optimizeSpeed;
 }
 
-/* Improved start button positioning */
-#start-btn {
-    left: 50%;
-    top: 60%;
-    transform: translate(-50%, -50%);
-    width: max(140px, 20vmin);
-    height: max(60px, 8vmin);
-    z-index: 101;
-    min-width: 120px;
-    min-height: 50px;
+/* Button feedback effect */
+.game-control::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: transparent;
+  border-radius: 12px;
+  z-index: -1;
+  transition: background 0.1s ease;
 }
 
-/* Restart Button */
-#restart-btn {
-    left: 50%;
-    top: 65%;
-    transform: translate(-50%, -50%);
-    width: max(80px, 12vmin);
-    height: max(80px, 12vmin);
-    display: none;
+.game-control:active::before {
+  background: rgba(255, 215, 0, 0.1);
 }
 
-/* Sound Control Buttons - Home Screen */
-#sound-btn-home, 
-#mute-btn-home {
-    left: max(10px, 2vmin);
-    top: max(10px, 2vmin);
-    width: max(40px, 6vmin);
-    height: max(40px, 6vmin);
-    z-index: 101;
+/* Performance optimizations */
+canvas {
+  will-change: transform;
+  image-rendering: optimizeSpeed;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
 }
 
-/* Game Control Buttons - In Game */
-#pause-btn, 
-#play-btn {
-    right: max(10px, 2vmin);
-    top: max(10px, 2vmin);
-    width: max(40px, 6vmin);
-    height: max(40px, 6vmin);
-    z-index: 101;
-    display: none;
+/* Animations */
+@keyframes enemyFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-/* Sound Control Buttons - Game Over */
-#sound-btn-gameover, 
-#mute-btn-gameover {
-    left: 50%;
-    top: 75%;
-    transform: translate(-50%, -50%);
-    width: max(60px, 8vmin);
-    height: max(60px, 8vmin);
-    display: none;
+.enemy {
+  animation: enemyFloat 2s ease-in-out infinite;
 }
 
-/* Pause Overlay */
+@keyframes shield-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.powerup-shield {
+  animation: shield-pulse 1.5s infinite;
+  pointer-events: none;
+}
+
+/* Achievement notification animation */
+@keyframes achievementPop {
+  0% {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+  10% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  90% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.achievement-notification {
+  animation: achievementPop 3s ease-in-out;
+}
+
+/* Pause overlay styling */
 .pause-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 200;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    gap: max(20px, 3vmin);
-    backdrop-filter: blur(4px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 25;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  pointer-events: auto;
 }
 
 .pause-overlay .game-control {
-    width: max(80px, 12vmin);
-    height: max(80px, 12vmin);
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: max(8px, 1vmin);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+  display: flex;
 }
 
-.pause-overlay .game-control:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+/* Achievement overlay styling */
+.achievements-overlay {
+  scrollbar-width: thin;
+  scrollbar-color: #ffd700 transparent;
 }
 
-/* Game Over Elements */
-.game-over-elements {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 150;
-    display: none;
+.achievements-overlay::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Mobile Specific Styles */
-@media (max-width: 767px) {
-    #start-btn {
-        width: max(120px, 30vw) !important;
-        height: max(50px, 12vw) !important;
-    }
-    
-    #restart-btn {
-        width: max(70px, 18vmin) !important;
-        height: max(70px, 18vmin) !important;
-    }
-    
-    .game-control {
-        min-width: 48px;
-        min-height: 48px;
-    }
-    
-    .pause-overlay {
-        gap: max(15px, 2vmin);
-    }
-    
-    .pause-overlay .game-control {
-        width: max(70px, 10vmin);
-        height: max(70px, 10vmin);
-    }
+.achievements-overlay::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Very Small Devices */
+.achievements-overlay::-webkit-scrollbar-thumb {
+  background: #ffd700;
+  border-radius: 3px;
+}
+
+.achievement-card {
+  transition: all 0.3s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-2px);
+}
+
+.achievement-card.unlocked {
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.achievement-card.locked {
+  border-color: #666;
+  opacity: 0.6;
+}
+
+.close-achievements {
+  transition: all 0.2s ease;
+}
+
+.close-achievements:hover {
+  background: #fff;
+  transform: scale(1.05);
+}
+
+.close-achievements:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .pause-overlay {
+    gap: 25px;
+  }
+
+  .achievements-overlay {
+    padding: 15px;
+  }
+
+  .achievements-header {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+}
+
 @media (max-width: 320px) {
-    #start-btn {
-        width: 100px !important;
-        height: 45px !important;
-    }
-    
-    #restart-btn {
-        width: 60px !important;
-        height: 60px !important;
-    }
+  .pause-overlay {
+    gap: 20px;
+  }
+
+  .achievements-overlay {
+    padding: 10px;
+  }
+
+  .achievements-header {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
 }
 
-/* Landscape Mode */
-@media (orientation: landscape) {
-    .game-wrapper {
-        max-width: min(100vh * 9/16, 100vw);
-        max-height: 100vh;
-    }
-    
-    #start-btn {
-        top: 50% !important;
-        width: max(100px, 15vmin) !important;
-        height: max(40px, 6vmin) !important;
-    }
+/* Prevent scrolling and zooming on mobile */
+html {
+  touch-action: none;
+  -webkit-text-size-adjust: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* Desktop Styles */
-@media (min-width: 768px) {
-    .game-wrapper {
-        max-width: 450px;
-        max-height: 800px;
-    }
-    
-    .game-control {
-        min-width: 50px;
-        min-height: 50px;
-    }
-    
-    #start-btn {
-        width: 160px;
-        height: 70px;
-    }
-    
-    #restart-btn {
-        width: 90px;
-        height: 90px;
-    }
-}
-
-/* High DPI Display Support */
+/* High DPI display optimizations */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    #board, #ui {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-    }
+  canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+  }
 }
 
-/* Focus and Accessibility */
-.game-control:focus-visible {
-    outline: 2px solid #FFD700;
-    outline-offset: 2px;
+/* Accessibility improvements */
+.game-control:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
 }
 
-/* Loading State */
+/* Loading states */
 .loading {
-    opacity: 0.7;
-    pointer-events: none;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-/* Animation for button states */
-@keyframes buttonPress {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
+/* Prevent context menu on long press */
+.game-container {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-.game-control.pressed {
-    animation: buttonPress 0.1s ease;
+/* Button size classes for consistency */
+.btn-large {
+  min-width: 160px;
+  min-height: 70px;
 }
 
-/* Print Styles */
-@media print {
-    .game-wrapper {
-        display: none;
-    }
+.btn-medium {
+  min-width: 80px;
+  min-height: 80px;
+}
+
+.btn-small {
+  min-width: 50px;
+  min-height: 50px;
+}
+
+/* Ensure proper spacing between game over buttons */
+#restart-btn,
+#sound-btn-gameover,
+#mute-btn-gameover {
+  margin: 10px;
+}
+
+/* Mobile touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  .game-control {
+    transition: transform 0.05s ease;
+  }
+
+  .game-control:active {
+    transform: scale(0.85);
+  }
 }
