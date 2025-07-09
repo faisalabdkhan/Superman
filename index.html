@@ -30,6 +30,8 @@
             /* iOS performance optimization */
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
+            -webkit-perspective: 1000px;
+            perspective: 1000px;
         }
         
         /* Mobile-first responsive design */
@@ -41,9 +43,10 @@
             overflow: hidden;
             touch-action: none;
             /* iOS optimization */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
             will-change: transform;
+            contain: layout style paint;
         }
 
         /* Desktop fixed layout */
@@ -84,14 +87,6 @@
             }
         }
 
-        /* Tablet landscape - hybrid approach */
-        @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-            .game-container {
-                width: 500px;
-                height: 600px;
-            }
-        }
-
         #homepage, #board, #ui {
             position: absolute;
             top: 0;
@@ -99,9 +94,10 @@
             width: 100%;
             height: 100%;
             touch-action: none;
-            /* iOS optimization */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            /* iOS canvas optimization */
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            contain: strict;
         }
 
         #homepage { 
@@ -113,9 +109,10 @@
 
         #board { 
             z-index: 1;
-            /* iOS canvas optimization */
+            /* iOS-specific canvas optimizations */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: optimize-contrast;
+            image-rendering: pixelated;
         }
 
         #ui { 
@@ -156,21 +153,21 @@
             pointer-events: auto;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            transition: transform 0.1s ease, opacity 0.1s ease;
+            transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             /* iOS optimization */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            will-change: transform, opacity;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            contain: layout style paint;
         }
 
         .game-control:active,
         .game-control.button-active {
-            transform: scale(0.9) translateZ(0);
-            opacity: 0.7;
+            transform: translate3d(0, 0, 0) scale(0.9);
         }
         
         .game-control img {
@@ -229,12 +226,12 @@
             }
 
             .game-control:hover {
-                transform: scale(1.05) translateZ(0);
+                transform: translate3d(0, 0, 0) scale(1.05);
                 opacity: 0.9;
             }
 
             .game-control:active {
-                transform: scale(0.95) translateZ(0);
+                transform: translate3d(0, 0, 0) scale(0.95);
             }
         }
 
@@ -242,13 +239,13 @@
         #start-btn {
             left: 50%;
             top: 35%;
-            transform: translateX(-50%) translateZ(0);
+            transform: translate(-50%, 0) translate3d(0, 0, 0);
         }
         
         #restart-btn {
             left: 30%;
             top: 70%;
-            transform: translateX(-50%) translateZ(0);
+            transform: translate(-50%, 0) translate3d(0, 0, 0);
         }
 
         #sound-btn-gameover, #mute-btn-gameover {
@@ -271,13 +268,13 @@
             #start-btn {
                 left: 50%;
                 top: 35%;
-                transform: translateX(-50%) translateZ(0);
+                transform: translate(-50%, 0) translate3d(0, 0, 0);
             }
             
             #restart-btn {
                 left: 30%;
                 top: 70%;
-                transform: translateX(-50%) translateZ(0);
+                transform: translate(-50%, 0) translate3d(0, 0, 0);
             }
 
             #sound-btn-gameover, #mute-btn-gameover {
@@ -311,8 +308,9 @@
             gap: 30px;
             pointer-events: auto;
             /* iOS optimization */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            contain: strict;
         }
 
         .pause-overlay .game-control {
@@ -440,7 +438,7 @@
         /* Desktop hover effects */
         @media (hover: hover) and (pointer: fine) {
             .game-control:hover {
-                transform: scale(1.05) translateZ(0);
+                transform: translate3d(0, 0, 0) scale(1.05);
             }
         }
 
@@ -448,12 +446,12 @@
         @media (hover: none) and (pointer: coarse) {
             .game-control {
                 transition: transform 0.05s ease;
-                -webkit-transform: translateZ(0);
-                transform: translateZ(0);
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
             }
 
             .game-control:active {
-                transform: scale(0.85) translateZ(0);
+                transform: translate3d(0, 0, 0) scale(0.85);
             }
         }
 
@@ -463,7 +461,7 @@
                 position: absolute;
                 bottom: -80px;
                 left: 50%;
-                transform: translateX(-50%) translateZ(0);
+                transform: translate(-50%, 0) translate3d(0, 0, 0);
                 color: #fff;
                 text-align: center;
                 font-size: 14px;
@@ -497,59 +495,78 @@
             .game-container {
                 -webkit-transform: translate3d(0, 0, 0);
                 transform: translate3d(0, 0, 0);
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
             }
             
             #board, #ui {
                 -webkit-transform: translate3d(0, 0, 0);
                 transform: translate3d(0, 0, 0);
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
+        }
+
+        /* Reduce motion for performance */
+        @media (prefers-reduced-motion: reduce) {
+            .game-control {
+                transition: none;
+            }
+        }
+
+        /* High DPI optimization */
+        @media (-webkit-min-device-pixel-ratio: 2) {
+            #board, #ui {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: optimize-contrast;
             }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <img id="homepage" src="/placeholder.svg?height=640&width=360" alt="Game Background">
+        <img id="homepage" src="images/AMMAN.png" alt="Game Background">
         <canvas id="board"></canvas>
         <canvas id="ui"></canvas>
 
         <!-- Game Controls with standardized classes -->
         <button id="start-btn" class="game-control btn-large" aria-label="Start Game">
-            <img src="/placeholder.svg?height=70&width=160" alt="Start Game">
+            <img src="images/start.png" alt="Start Game">
         </button>
         <button id="restart-btn" class="game-control btn-medium" aria-label="Restart Game">
-            <img src="/placeholder.svg?height=80&width=80" alt="Restart Game">
+            <img src="images/retry.png" alt="Restart Game">
         </button>
         
         <!-- Sound Controls -->
         <button id="sound-btn-home" class="game-control btn-small" aria-label="Sound On">
-            <img src="/placeholder.svg?height=50&width=50" alt="Sound On">
+            <img src="images/sound.png" alt="Sound On">
         </button>
         <button id="mute-btn-home" class="game-control btn-small" aria-label="Sound Off">
-            <img src="/placeholder.svg?height=50&width=50" alt="Sound Off">
+            <img src="images/mute.png" alt="Sound Off">
         </button>
         <button id="pause-btn" class="game-control btn-small" aria-label="Pause Game">
-            <img src="/placeholder.svg?height=50&width=50" alt="Pause Game">
+            <img src="images/pause.png" alt="Pause Game">
         </button>
         <button id="play-btn" class="game-control btn-small" aria-label="Resume Game">
-            <img src="/placeholder.svg?height=50&width=50" alt="Resume Game">
+            <img src="images/play.png" alt="Resume Game">
         </button>
         <button id="sound-btn-gameover" class="game-control btn-medium" aria-label="Sound On">
-            <img src="/placeholder.svg?height=80&width=80" alt="Sound On">
+            <img src="images/sound.png" alt="Sound On">
         </button>
         <button id="mute-btn-gameover" class="game-control btn-medium" aria-label="Sound Off">
-            <img src="/placeholder.svg?height=80&width=80" alt="Sound Off">
+            <img src="images/mute.png" alt="Sound Off">
         </button>
 
         <!-- Pause Overlay -->
         <div id="pause-overlay" class="pause-overlay">
             <button id="resume-btn" class="game-control btn-medium" aria-label="Resume Game">
-                <img src="/placeholder.svg?height=80&width=80" alt="Resume Game">
+                <img src="images/play.png" alt="Resume Game">
             </button>
             <button id="sound-btn-pause" class="game-control btn-medium" aria-label="Sound On">
-                <img src="/placeholder.svg?height=80&width=80" alt="Sound On">
+                <img src="images/sound.png" alt="Sound On">
             </button>
             <button id="mute-btn-pause" class="game-control btn-medium" aria-label="Sound Off">
-                <img src="/placeholder.svg?height=80&width=80" alt="Sound Off">
+                <img src="images/mute.png" alt="Sound Off">
             </button>
         </div>
 
