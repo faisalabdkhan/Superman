@@ -121,10 +121,6 @@ const muteBtnHome = document.getElementById("mute-btn-home");
 const soundBtnGameover = document.getElementById("sound-btn-gameover");
 const muteBtnGameover = document.getElementById("mute-btn-gameover");
 
-// Touch handling flags
-let touchHandled = false;
-let lastTouchTime = 0;
-
 // Canvas setup with proper scaling
 function setupCanvas() {
     dpr = window.devicePixelRatio || 1;
@@ -226,41 +222,9 @@ function setupButtonEvents() {
     });
 }
 
-// Fixed touch handling for game area (not buttons)
+// Modified touch handling - only buttons will handle touches
 function setupGameTouchEvents() {
-    const gameContainer = document.querySelector('.game-container');
-    gameContainer.addEventListener('touchstart', function(e) {
-        if (e.target.closest('.game-control')) return;
-        e.preventDefault();
-        handleGameTouch(e);
-    }, { passive: false });
-    gameContainer.addEventListener('click', function(e) {
-        if (e.target.closest('.game-control')) return;
-        handleGameTouch(e);
-    });
-}
-
-function handleGameTouch(e) {
-    const currentTime = Date.now();
-    
-    // Prevent double-tap issues
-    if (currentTime - lastTouchTime < 200) {
-        return;
-    }
-    lastTouchTime = currentTime;
-
-    if (isCountdownActive) return;
-    
-    // Game touch logic
-    if (!gameStarted && !gameOver) {
-        startGame();
-    } else if (gameOver) {
-        restartGame();
-    } else if (gameStarted && !gameOver && !isPaused) {
-        jump();
-    } else if (isPaused) {
-        resumeGame();
-    }
+    // No general touch handlers - only buttons will handle touches
 }
 
 function jump() {
@@ -344,7 +308,7 @@ function pauseGame() {
     isPaused = true;
     pauseOverlay.style.display = "flex";
     pauseBtn.style.display = "none";
-    playBtn.style.display = "none"; // Hide play button (since we're showing pause overlay)
+    playBtn.style.display = "none";
     bgMusic.pause();
     cancelAnimationFrame(animationFrameId);
     clearInterval(pipeInterval);
@@ -382,8 +346,8 @@ function startGame() {
     ui.style.display = "block";
     startBtn.style.display = "none";
     restartBtn.style.display = "none";
-    pauseBtn.style.display = "block"; // Show pause button
-    playBtn.style.display = "none";   // Hide play button
+    pauseBtn.style.display = "block";
+    playBtn.style.display = "none";
     soundBtnHome.style.display = "none";
     muteBtnHome.style.display = "none";
     pauseOverlay.style.display = "none";
@@ -638,11 +602,8 @@ function handleKeyPress(e) {
         if (isPaused) resumeGame();
         else pauseGame();
     }
-    if (!gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
-        startGame();
-        return;
-    }
-
+    
+    // Only allow jumping when game is active
     if (gameStarted && !gameOver && (e.code === "Space" || e.code === "ArrowUp")) {
         jump();
     }
