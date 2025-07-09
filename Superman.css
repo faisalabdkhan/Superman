@@ -17,6 +17,7 @@ body {
   width: 100%;
   height: 100%;
   font-family: Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 #board {
@@ -25,13 +26,23 @@ body {
   background-position: center;
   touch-action: none;
   image-rendering: optimizeSpeed;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+  backface-visibility: hidden;
+  perspective: 1000;
 }
 
-/* Game Over Screen Elements */
-.game-over-elements {
-  display: none;
-  position: absolute;
-  z-index: 20;
+/* iOS specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  #board, #ui {
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+  }
+  
+  .game-control {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
 }
 
 /* Button Visibility Control */
@@ -67,277 +78,41 @@ body {
   font-size: 40px;
   color: #ffd700;
   font-weight: bold;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-.game-control:active,
-.game-control.button-active {
-  transform: scale(0.9);
-  opacity: 0.7;
-}
-
-.game-control img {
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  image-rendering: optimizeSpeed;
-}
-
-/* Button feedback effect */
-.game-control::before {
-  content: "";
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
-  background: transparent;
-  border-radius: 12px;
-  z-index: -1;
-  transition: background 0.1s ease;
-}
-
-.game-control:active::before {
-  background: rgba(255, 215, 0, 0.1);
-}
+/* ... rest of your existing CSS with these additions: */
 
 /* Performance optimizations */
 canvas {
   will-change: transform;
   image-rendering: optimizeSpeed;
   image-rendering: -webkit-optimize-contrast;
-  image-rendering: optimize-contrast;
+  image-rendering: pixelated;
+  backface-visibility: hidden;
 }
 
-/* Animations */
-@keyframes enemyFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.enemy {
-  animation: enemyFloat 2s ease-in-out infinite;
-}
-
-@keyframes shield-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.powerup-shield {
-  animation: shield-pulse 1.5s infinite;
-  pointer-events: none;
-}
-
-/* Achievement notification animation */
-@keyframes achievementPop {
-  0% {
-    transform: translateX(-50%) translateY(-20px);
-    opacity: 0;
-  }
-  10% {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  90% {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-50%) translateY(-20px);
-    opacity: 0;
-  }
-}
-
-.achievement-notification {
-  animation: achievementPop 3s ease-in-out;
-}
-
-/* Pause overlay styling */
-.pause-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 25;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  pointer-events: auto;
-}
-
-.pause-overlay .game-control {
-  display: flex;
-}
-
-/* Achievement overlay styling */
-.achievements-overlay {
-  scrollbar-width: thin;
-  scrollbar-color: #ffd700 transparent;
-}
-
-.achievements-overlay::-webkit-scrollbar {
-  width: 6px;
-}
-
-.achievements-overlay::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.achievements-overlay::-webkit-scrollbar-thumb {
-  background: #ffd700;
-  border-radius: 3px;
-}
-
-.achievement-card {
-  transition: all 0.3s ease;
-}
-
-.achievement-card:hover {
-  transform: translateY(-2px);
-}
-
-.achievement-card.unlocked {
-  border-color: #ffd700;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-
-.achievement-card.locked {
-  border-color: #666;
-  opacity: 0.6;
-}
-
-.close-achievements {
-  transition: all 0.2s ease;
-}
-
-.close-achievements:hover {
-  background: #fff;
-  transform: scale(1.05);
-}
-
-.close-achievements:active {
-  transform: scale(0.95);
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .pause-overlay {
-    gap: 25px;
-  }
-
-  .achievements-overlay {
-    padding: 15px;
-  }
-
-  .achievements-header {
-    font-size: 20px;
-    margin-bottom: 15px;
-  }
-}
-
-@media (max-width: 320px) {
-  .pause-overlay {
-    gap: 20px;
-  }
-
-  .achievements-overlay {
-    padding: 10px;
-  }
-
-  .achievements-header {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-}
-
-/* Prevent scrolling and zooming on mobile */
-html {
-  touch-action: none;
-  -webkit-text-size-adjust: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* High DPI display optimizations */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  canvas {
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: optimize-contrast;
-  }
-}
-
-/* Accessibility improvements */
-.game-control:focus {
-  outline: 2px solid #ffd700;
-  outline-offset: 2px;
-}
-
-/* Loading states */
-.loading {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* Prevent context menu on long press */
-.game-container {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Button size classes for consistency */
-.btn-large {
-  min-width: 160px;
-  min-height: 70px;
-}
-
-.btn-medium {
-  min-width: 80px;
-  min-height: 80px;
-}
-
-.btn-small {
-  min-width: 50px;
-  min-height: 50px;
-}
-
-/* Ensure proper spacing between game over buttons */
-#restart-btn,
-#sound-btn-gameover,
-#mute-btn-gameover {
-  margin: 10px;
-}
-
-/* Mobile touch improvements */
+/* iOS touch improvements */
 @media (hover: none) and (pointer: coarse) {
   .game-control {
-    transition: transform 0.05s ease;
+    transition: none;
   }
-
+  
   .game-control:active {
-    transform: scale(0.85);
+    transform: scale(0.85) translateZ(0);
+  }
+  
+  #board {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Disable animations on low-power devices */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }
