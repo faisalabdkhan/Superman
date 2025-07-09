@@ -54,6 +54,7 @@ html, body {
     background-color: #000;
     overflow: hidden;
     border-radius: min(2vw, 8px);
+    pointer-events: none; /* Prevent touch events on container */
 }
 
 /* Homepage Container */
@@ -111,7 +112,7 @@ html, body {
     border: none;
     background: transparent;
     padding: max(8px, 1vmin);
-    pointer-events: auto;
+    pointer-events: auto; /* Enable touch events only on buttons */
     transition: transform 0.15s ease, opacity 0.15s ease;
     border-radius: max(4px, 0.5vmin);
     outline: none;
@@ -241,53 +242,80 @@ html, body {
     display: none;
 }
 
-/* Responsive Design for Different Screen Sizes */
-@media (max-width: 480px) {
+/* Mobile Specific Styles */
+@media (max-width: 767px) {
     #start-btn {
-        width: max(120px, 30vw);
-        height: max(50px, 12vw);
-        top: 58%;
+        width: max(120px, 30vw) !important;
+        height: max(50px, 12vw) !important;
     }
+    
+    #restart-btn {
+        width: max(70px, 18vmin) !important;
+        height: max(70px, 18vmin) !important;
+    }
+    
     .game-control {
         min-width: 48px;
         min-height: 48px;
     }
+    
     .pause-overlay {
         gap: max(15px, 2vmin);
     }
+    
     .pause-overlay .game-control {
         width: max(70px, 10vmin);
         height: max(70px, 10vmin);
     }
 }
 
-@media (max-height: 600px) {
+/* Very Small Devices */
+@media (max-width: 320px) {
     #start-btn {
-        top: 55%;
+        width: 100px !important;
+        height: 45px !important;
     }
+    
     #restart-btn {
-        top: 60%;
-    }
-    #sound-btn-gameover, 
-    #mute-btn-gameover {
-        top: 70%;
+        width: 60px !important;
+        height: 60px !important;
     }
 }
 
-/* Landscape Mode Adjustments */
-@media (orientation: landscape) and (max-height: 500px) {
+/* Landscape Mode */
+@media (orientation: landscape) {
     .game-wrapper {
         max-width: min(100vh * 9/16, 100vw);
         max-height: 100vh;
     }
+    
     #start-btn {
-        top: 50%;
-        width: max(100px, 15vmin);
-        height: max(40px, 6vmin);
+        top: 50% !important;
+        width: max(100px, 15vmin) !important;
+        height: max(40px, 6vmin) !important;
     }
-    .pause-overlay .game-control {
-        width: max(60px, 8vmin);
-        height: max(60px, 8vmin);
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+    .game-wrapper {
+        max-width: 450px;
+        max-height: 800px;
+    }
+    
+    .game-control {
+        min-width: 50px;
+        min-height: 50px;
+    }
+    
+    #start-btn {
+        width: 160px;
+        height: 70px;
+    }
+    
+    #restart-btn {
+        width: 90px;
+        height: 90px;
     }
 }
 
