@@ -217,18 +217,9 @@ function initializeAudio() {
 
   try {
     // Create audio elements with iOS optimization
-    bgMusic = new Audio()
-    flySound = new Audio()
-    hitSound = new Audio()
-
-    // Set audio sources to placeholder for demo
-    bgMusic.src =
-      "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"
-    flySound.src =
-      "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"
-    hitSound.src =
-      "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT"
-
+    const bgMusic = new Audio("./sounds/bg.mp3")
+    const flySound = new Audio("./sounds/fly.mp3")
+    const hitSound = new Audio("./sounds/hit.mp3")
     bgMusic.loop = true
     bgMusic.volume = 0.3
     flySound.volume = 0.5
@@ -289,32 +280,24 @@ window.onload = () => {
   // Load images with iOS optimization
   const imagePromises = []
 
-  powerUpImg.src = "/placeholder.svg?height=40&width=40"
-  enemyImg.src = "/placeholder.svg?height=40&width=60"
-
+  powerUpImg.src = "./images/powerups.png"
+  enemyImg.src = "./images/enemy.png"
   SupermanImg = new Image()
-  SupermanImg.src = "/placeholder.svg?height=32&width=75"
-
+  SupermanImg.src = "./images/superman1.png"
   topPipeImg = new Image()
-  topPipeImg.src = "/placeholder.svg?height=512&width=64"
-
+  topPipeImg.src = "./images/toppipe.png"
   bottomPipeImg = new Image()
-  bottomPipeImg.src = "/placeholder.svg?height=512&width=64"
-
+  bottomPipeImg.src = "./images/bottompipe.png"
   newTopPipeImg = new Image()
-  newTopPipeImg.src = "/placeholder.svg?height=512&width=64"
-
+  newTopPipeImg.src = "./images/pipe11.png"
   newBottomPipeImg = new Image()
-  newBottomPipeImg.src = "/placeholder.svg?height=512&width=64"
-
+  newBottomPipeImg.src = "./images/pipe1.png"
   gameOverImg = new Image()
-  gameOverImg.src = "/placeholder.svg?height=200&width=450"
-
+  gameOverImg.src = "./images/gameover.png"
   highScoreImg = new Image()
-  highScoreImg.src = "/placeholder.svg?height=80&width=150"
-
+  highScoreImg.src = "./images/highscore.png"
   collisionImg = new Image()
-  collisionImg.src = "/placeholder.svg?height=32&width=75"
+  collisionImg.src = "./images/collision.png"
 
   // iOS optimization: set image rendering
   if (isIOSDevice) {
